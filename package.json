@@ -9,12 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.9.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
     "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18",
-    "serverless-mysql": "^1.5.5"
+    "react-dropzone": "^14.2.3",
+    "react-hook-form": "^7.52.2",
+    "react-image-crop": "^11.0.6",
+    "react-quill": "^2.0.0",
+    "serverless-mysql": "^1.5.5",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

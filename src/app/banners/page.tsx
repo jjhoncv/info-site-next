@@ -1,9 +1,9 @@
 // app/banners/page.tsx
-import { getAllBanners } from "@/services/bannerService";
+import { findAllBanners } from "@/services/bannerService";
 import BannerList from "@/app/components/BannerList";
 
 export default async function BannersPage() {
-  const banners = await getAllBanners();
+  const banners = await findAllBanners();
 
   return (
     <div className="container mx-auto px-4 py-8">
