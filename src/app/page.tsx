@@ -1,8 +1,9 @@
 // app/page.tsx
 import { findAllBanners } from "@/services/bannerService";
-import Link from "next/link";
-import Banner from "./components/Banner";
 import { getAllServices } from "@/services/serviceService";
+import Banner from "./components/Banner/ui/Banner";
+import Header from "./components/Header";
+import { LayoutPage } from "./components/LayoutPage";
 import ServicesGrid from "./components/ServicesGrid";
 
 export default async function Home() {
@@ -10,9 +11,10 @@ export default async function Home() {
   const services = await getAllServices();
 
   return (
-    <>
+    <LayoutPage>
+      <Header services={services} />
       <Banner banners={banners} />
       <ServicesGrid services={services} />
-    </>
+    </LayoutPage>
   );
 }

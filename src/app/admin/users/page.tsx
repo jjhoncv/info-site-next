@@ -1,5 +1,5 @@
 // src/app/admin/users/page.tsx
-"use client";
+"use server";
 
 import { useState, useEffect } from "react";
 import {

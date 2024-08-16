@@ -9,18 +9,11 @@ export default async function AdminLayout({
 }: {
   children: ReactNode;
 }) {
-  const user = await getCurrentUser();
+  // const user = await getCurrentUser();
 
-  if (!user) {
-    redirect("/admin/login");
-  }
+  // if (!user) {
+  //   redirect("/admin/login");
+  // }
 
-  return (
-    <div className="flex h-screen bg-gray-100">
-      <AdminSidebar user={user} />
-      <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-        <div className="container mx-auto px-6 py-8">{children}</div>
-      </main>
-    </div>
-  );
+  return children;
 }

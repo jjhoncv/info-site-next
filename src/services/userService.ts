@@ -40,17 +40,33 @@ export async function getUserById(id: number): Promise<UserWithRole | null> {
   } as UserWithRole;
 }
 
+export async function getUserByEmail(email: string): Promise<User | null> {
+  const users = await executeQuery<User[]>({
+    query: "SELECT * FROM users WHERE email = ?",
+    values: [email],
+  });
+
+  if (users.length === 0) return null;
+
+  const user = users[0];
+  const role = await getUserRole(user.id);
+
+  return {
+    ...user,
+    role,
+  };
+}
+
 export async function createUser(
   user: Omit<User, "id" | "created_at" | "updated_at">
 ): Promise<UserWithRole> {
-  const hashedPassword = await bcrypt.hash(user.password, 10);
   const result = await executeQuery<{ insertId: number }>({
     query:
       "INSERT INTO users (username, email, password, role_id, is_active) VALUES (?, ?, ?, ?, ?)",
     values: [
       user.username,
       user.email,
-      hashedPassword,
+      user.password,
       user.role_id,
       user.is_active,
     ],
@@ -130,7 +146,7 @@ export async function loginUser(
   return createToken(user.id);
 }
 
-export async function getUserRole(userId: number): Promise<Role> {
+export async function getUserRole(userId: number): Promise<Role | {}> {
   const roles = await executeQuery<(Role & { permission: string })[]>({
     query: `
       SELECT r.id, r.name, p.name as permission
@@ -143,17 +159,17 @@ export async function getUserRole(userId: number): Promise<Role> {
     values: [userId],
   });
 
-  if (roles.length === 0) {
-    throw new Error("User role not found");
-  }
+  let role = {};
 
-  const role: Role = {
-    id: roles[0].id,
-    name: roles[0].name,
-    permissions: roles.map((r) => r.permission as PermissionName),
-    created_at: new Date(),
-    updated_at: new Date(),
-  };
+  if (roles.length > 0) {
+    role = {
+      id: roles[0].id,
+      name: roles[0].name,
+      permissions: roles.map((r) => r.permission as PermissionName),
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+  }
 
   return role;
 }

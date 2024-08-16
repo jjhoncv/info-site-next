@@ -7,8 +7,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/app/components/ui/Table";
-import { Button } from "@/app/components/ui/Button";
+} from "@/app/components/Common/ui/Table";
+import { Button } from "@/app/components/Common/ui/Button";
 
 interface Column<T> {
   key: string;

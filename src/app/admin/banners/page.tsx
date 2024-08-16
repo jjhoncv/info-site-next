@@ -10,7 +10,7 @@ import { Form } from "@/app/components/Form";
 import { bannerSchema } from "@/lib/validations";
 import { Banner } from "@/interfaces";
 import { useEffect, useState } from "react";
-import { Button } from "@/app/components/ui/Button";
+import { Button } from "@/app/components/Common/ui/Button";
 
 export default function BannersPage() {
   const [banners, setBanners] = useState<Banner[]>([]);

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { UserWithRole, PermissionName } from "@/interfaces";
 
 interface AdminSidebarProps {
-  user: UserWithRole;
+  user: UserWithRole | null;
 }
 
 interface MenuItem {
@@ -29,14 +29,16 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ user }) => {
   const pathname = usePathname();
 
   const hasPermission = (permission: PermissionName): boolean => {
-    return user.role.permissions.includes(permission);
+    if (!user) return false;
+
+    return user.role.permissions?.includes(permission);
   };
 
   return (
     <aside className="bg-gray-800 text-white w-64 min-h-screen p-4">
       <div className="mb-6">
         <h2 className="text-2xl font-semibold">Admin Panel</h2>
-        <p className="text-sm text-gray-400">Bienvenido, {user.username}</p>
+        <p className="text-sm text-gray-400">Bienvenido, {user?.username}</p>
       </div>
       <nav>
         <ul>
@@ -56,6 +58,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ user }) => {
               )
           )}
         </ul>
+        <Link href="/admin/logout">Logout</Link>
       </nav>
     </aside>
   );

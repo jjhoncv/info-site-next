@@ -3,9 +3,9 @@ import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Input } from "@/app/components/ui/Input";
-import { Button } from "@/app/components/ui/Button";
-import { Textarea } from "@/app/components/ui/Textarea";
+import { Input } from "@/app/components/Common/ui/Input";
+import { Button } from "@/app/components/Common/ui/Button";
+import { Textarea } from "@/app/components/Common/ui/Textarea";
 
 interface FormProps<T extends z.ZodType<any, any>> {
   schema: T;
