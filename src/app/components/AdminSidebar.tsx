@@ -1,11 +1,12 @@
 "use client";
-// src/components/AdminSidebar.tsx
+
+import { PermissionName, User } from "@/interfaces";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UserWithRole, PermissionName } from "@/interfaces";
 
 interface AdminSidebarProps {
-  user: UserWithRole | null;
+  user: User;
 }
 
 interface MenuItem {
@@ -15,14 +16,24 @@ interface MenuItem {
   icon?: string; // Opcional: para iconos si decides añadirlos
 }
 
+const base = `/dashboard`;
+
 const menuItems: MenuItem[] = [
-  { label: "Dashboard", href: "/admin", permission: "dashboard.view" },
-  { label: "Banners", href: "/admin/banners", permission: "banners.view" },
-  { label: "Servicios", href: "/admin/services", permission: "services.view" },
-  { label: "Proyectos", href: "/admin/projects", permission: "projects.view" },
-  { label: "Páginas", href: "/admin/pages", permission: "pages.view" },
-  { label: "Galería", href: "/admin/gallery", permission: "gallery.view" },
-  { label: "Usuarios", href: "/admin/users", permission: "users.view" },
+  { label: "Dashboard", href: `${base}`, permission: "dashboard.view" },
+  { label: "Banners", href: `${base}/banners`, permission: "banners.view" },
+  {
+    label: "Servicios",
+    href: `${base}/services`,
+    permission: "services.view",
+  },
+  {
+    label: "Proyectos",
+    href: `${base}/projects`,
+    permission: "projects.view",
+  },
+  { label: "Páginas", href: `${base}/pages`, permission: "pages.view" },
+  { label: "Galería", href: `${base}/gallery`, permission: "gallery.view" },
+  { label: "Usuarios", href: `${base}/users`, permission: "users.view" },
 ];
 
 const AdminSidebar: React.FC<AdminSidebarProps> = ({ user }) => {
@@ -31,14 +42,14 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ user }) => {
   const hasPermission = (permission: PermissionName): boolean => {
     if (!user) return false;
 
-    return user.role.permissions?.includes(permission);
+    return user?.role?.permissions?.includes(permission) ?? false;
   };
 
   return (
     <aside className="bg-gray-800 text-white w-64 min-h-screen p-4">
       <div className="mb-6">
         <h2 className="text-2xl font-semibold">Admin Panel</h2>
-        <p className="text-sm text-gray-400">Bienvenido, {user?.username}</p>
+        <p className="text-sm text-gray-400">Bienvenido, {user?.username} </p>
       </div>
       <nav>
         <ul>
@@ -58,7 +69,9 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ user }) => {
               )
           )}
         </ul>
-        <Link href="/admin/logout">Logout</Link>
+        <button onClick={() => signOut({ callbackUrl: "/login" })}>
+          Logout
+        </button>
       </nav>
     </aside>
   );

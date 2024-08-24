@@ -95,66 +95,95 @@ export interface GalleryItem {
   image_url: string;
 }
 
+export interface UserSession {
+  id?: string;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+}
+
 //admin
 export interface User {
-  id: number;
+  id: string;
   username: string;
   email: string;
   password: string; // Nota: Esto solo debe usarse para creación/actualización, nunca debe enviarse al cliente
-  role_id: number;
-  is_active: boolean;
-  created_at: Date;
-  updated_at: Date;
-  role?: Role; // Relación con Role, opcional porque no siempre se cargará
+  role_id: string;
+  is_active?: boolean;
+  created_at?: Date;
+  updated_at?: Date;
+  emailVerified?: Date;
+  role?: Role | null; // Relación con Role, opcional porque no siempre se cargará
 }
 
 export interface Role {
-  id: number;
+  id: string;
   name: string;
   created_at: Date;
   updated_at: Date;
-  permissions: PermissionName[]; // Cambiado a PermissionName[] para consistencia
+  permissions: PermissionName[] | null; // Cambiado a PermissionName[] para consistencia
 }
 
 // Mantenemos la interfaz Permission para la base de datos
 export interface Permission {
-  id: number;
+  id: string;
   name: PermissionName; // Cambiado a PermissionName para asegurar que solo se usen permisos válidos
   created_at: Date;
   updated_at: Date;
 }
 
-export type PermissionName =
-  | "dashboard.view"
-  | "banners.view"
-  | "banners.create"
-  | "banners.edit"
-  | "banners.delete"
-  | "services.view"
-  | "services.create"
-  | "services.edit"
-  | "services.delete"
-  | "projects.view"
-  | "projects.create"
-  | "projects.edit"
-  | "projects.delete"
-  | "pages.view"
-  | "pages.create"
-  | "pages.edit"
-  | "pages.delete"
-  | "gallery.view"
-  | "gallery.create"
-  | "gallery.edit"
-  | "gallery.delete"
-  | "users.view"
-  | "users.create"
-  | "users.edit"
-  | "users.delete";
-
-export interface UserWithRole extends Omit<User, "password" | "role_id"> {
-  role: {
-    id: number;
-    name: string;
-    permissions: PermissionName[];
-  };
+// crear enum para todos los permisos
+export enum PERMISSIONS {
+  DASHBOARD_VIEW = "dashboard.view",
+  BANNERS_VIEW = "banners.view",
+  BANNERS_CREATE = "banners.create",
+  BANNERS_EDIT = "banners.edit",
+  BANNERS_DELETE = "banners.delete",
+  SERVICES_VIEW = "services.view",
+  SERVICES_CREATE = "services.create",
+  SERVICES_EDIT = "services.edit",
+  SERVICES_DELETE = "services.delete",
+  PROJECTS_VIEW = "projects.view",
+  PROJECTS_CREATE = "projects.create",
+  PROJECTS_EDIT = "projects.edit",
+  PROJECTS_DELETE = "projects.delete",
+  PAGES_VIEW = "pages.view",
+  PAGES_CREATE = "pages.create",
+  PAGES_EDIT = "pages.edit",
+  PAGES_DELETE = "pages.delete",
+  GALLERY_VIEW = "gallery.view",
+  GALLERY_CREATE = "gallery.create",
+  GALLERY_EDIT = "gallery.edit",
+  GALLERY_DELETE = "gallery.delete",
+  USERS_VIEW = "users.view",
+  USERS_CREATE = "users.create",
+  USERS_EDIT = "users.edit",
+  USERS_DELETE = "users.delete",
 }
+
+export type PermissionName =
+  | PERMISSIONS.DASHBOARD_VIEW
+  | PERMISSIONS.BANNERS_VIEW
+  | PERMISSIONS.BANNERS_CREATE
+  | PERMISSIONS.BANNERS_EDIT
+  | PERMISSIONS.BANNERS_DELETE
+  | PERMISSIONS.SERVICES_VIEW
+  | PERMISSIONS.SERVICES_CREATE
+  | PERMISSIONS.SERVICES_EDIT
+  | PERMISSIONS.SERVICES_DELETE
+  | PERMISSIONS.PROJECTS_VIEW
+  | PERMISSIONS.PROJECTS_CREATE
+  | PERMISSIONS.PROJECTS_EDIT
+  | PERMISSIONS.PROJECTS_DELETE
+  | PERMISSIONS.PAGES_VIEW
+  | PERMISSIONS.PAGES_CREATE
+  | PERMISSIONS.PAGES_EDIT
+  | PERMISSIONS.PAGES_DELETE
+  | PERMISSIONS.GALLERY_VIEW
+  | PERMISSIONS.GALLERY_CREATE
+  | PERMISSIONS.GALLERY_EDIT
+  | PERMISSIONS.GALLERY_DELETE
+  | PERMISSIONS.USERS_VIEW
+  | PERMISSIONS.USERS_CREATE
+  | PERMISSIONS.USERS_EDIT
+  | PERMISSIONS.USERS_DELETE;

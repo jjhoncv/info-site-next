@@ -1,5 +1,4 @@
 // app/components/DataTable.tsx
-import React from "react";
 import {
   Table,
   TableBody,
@@ -8,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/components/Common/ui/Table";
-import { Button } from "@/app/components/Common/ui/Button";
+import React from "react";
 
 interface Column<T> {
   key: string;
@@ -19,8 +18,8 @@ interface Column<T> {
 interface DataTableProps<T> {
   data: T[];
   columns: Column<T>[];
-  onEdit: (item: T) => void;
-  onDelete: (item: T) => void;
+  onEdit?: (item: T) => void;
+  onDelete?: (item: T) => void;
 }
 
 export function DataTable<T extends { id: number }>({
@@ -49,12 +48,12 @@ export function DataTable<T extends { id: number }>({
                   : getNestedValue(item, column.key)}
               </TableCell>
             ))}
-            <TableCell>
+            {/* <TableCell>
               <Button onClick={() => onEdit(item)}>Editar</Button>
               <Button variant="danger" onClick={() => onDelete(item)}>
                 Eliminar
               </Button>
-            </TableCell>
+            </TableCell> */}
           </TableRow>
         ))}
       </TableBody>

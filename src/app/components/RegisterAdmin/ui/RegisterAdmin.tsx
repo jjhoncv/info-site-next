@@ -1,26 +1,21 @@
-// app/signup/page.tsx
 "use client";
 
-import { useForm } from "react-hook-form";
+import { registerAction } from "@/actions/auth-action";
+import { signupSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useState } from "react";
-
-// Define el esquema de validación con zod
-const signupSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 // Infiere el tipo del esquema
 type SignupFormData = z.infer<typeof signupSchema>;
 
 export default function RegisterAdmin() {
   const router = useRouter();
-  const [error, setError] = useState(null);
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
@@ -31,23 +26,15 @@ export default function RegisterAdmin() {
   });
 
   const onSubmit = async (data: SignupFormData) => {
-    try {
-      const res = await fetch("/api/admin/register", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const dataJSON = await res.json();
-      if (dataJSON.success) {
-        router.push("/admin");
+    setError(null);
+    startTransition(async () => {
+      const response = await registerAction(data);
+      if (response?.error) {
+        setError(response.error);
       } else {
-        setError(dataJSON.message);
+        router.push("/dashboard");
       }
-    } catch (e: any) {
-      setError(e.message);
-    }
+    });
   };
 
   return (

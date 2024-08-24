@@ -1,44 +1,50 @@
-// // src/middleware.ts
+import NextAuth from "next-auth";
+import authConfig from "@/auth.config";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { getSession } from "next-auth/react";
+import { auth } from "./auth";
 
-export function middleware(request: NextRequest) {
-  const token = request.cookies.get("token")?.value;
+const { auth: middleware } = NextAuth(authConfig);
 
-  const path = request.nextUrl.pathname;
+const publicRoutes = ["/", "/prices"];
+const authRoutes = ["/admin/login", "/admin/register"];
+const apiAuthPrefix = "/api/auth";
 
-  if (token) {
-    if (path === "/admin/login") {
-      return NextResponse.redirect(new URL("/admin", request.url));
-    }
+export default middleware(async (req) => {
+  const { nextUrl, auth: auth2 } = req;
+  const isLoggedIn = !!auth2?.user;
+
+  const session = await auth();
+
+  console.log(session);
+
+  // Permitir todas las rutas de API de autenticación
+  if (nextUrl.pathname.startsWith(apiAuthPrefix)) {
     return NextResponse.next();
-  } else {
-    if (path === "/admin") {
-      return NextResponse.redirect(new URL("/admin/login", request.url));
-    } else {
-      return NextResponse.next();
-    }
   }
 
-  //   const path = request.nextUrl.pathname;
-  //   console.log("Middleware called for path:", path);
+  // Permitir acceso a rutas públicas sin importar el estado de autenticación
+  if (publicRoutes.includes(nextUrl.pathname)) {
+    return NextResponse.next();
+  }
 
-  //   // No hacer nada para /admin/login
-  //   if (path === "/admin/login") {
-  //     return NextResponse.next();
-  //   }
+  // Redirigir a /dashboard si el usuario está logueado y trata de acceder a rutas de autenticación
+  if (isLoggedIn && authRoutes.includes(nextUrl.pathname)) {
+    return NextResponse.redirect(new URL("/dashboard", nextUrl));
+  }
 
-  //   // Para otras rutas /admin/*, verificar el token
-  //   if (path.startsWith("/admin")) {
-  //     const token = request.cookies.get("token")?.value;
-  //     if (!token) {
-  //       return NextResponse.redirect(new URL("/admin/login", request.url));
-  //     }
-  //   }
+  // Redirigir a /admin/login si el usuario no está logueado y trata de acceder a una ruta protegida
+  if (
+    !isLoggedIn &&
+    !authRoutes.includes(nextUrl.pathname) &&
+    !publicRoutes.includes(nextUrl.pathname)
+  ) {
+    return NextResponse.redirect(new URL("/admin/login", nextUrl));
+  }
 
-  //   return NextResponse.next();
-}
+  return NextResponse.next();
+});
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
 };

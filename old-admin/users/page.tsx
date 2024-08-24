@@ -1,16 +1,16 @@
 // src/app/admin/users/page.tsx
 "use server";
 
-import { useState, useEffect } from "react";
-import {
-  getUsers,
-  createUser,
-  updateUser,
-  deleteUser,
-} from "@/services/userService";
 import { DataTable } from "@/app/components/DataTable";
 import { Form } from "@/app/components/Form";
-import { UserWithRole, User } from "@/interfaces";
+import { User, UserWithRole } from "@/interfaces";
+import {
+  createUser,
+  deleteUser,
+  getUsers,
+  updateUser,
+} from "@/services/userService";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 
 const userSchema = z.object({

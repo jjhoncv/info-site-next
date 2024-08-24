@@ -1,21 +1,22 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useState } from "react";
+"use client";
 
-// Define el esquema de validación con zod
-const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
+import { loginAction } from "@/actions/auth-action";
+import { loginSchema } from "@/lib/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 // Infiere el tipo del esquema
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export const LoginAdmin = () => {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -24,26 +25,16 @@ export const LoginAdmin = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const [error, setError] = useState(null);
-
   const onSubmit = async (data: LoginFormData) => {
-    try {
-      const res = await fetch("/api/admin/login", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const dataJSON = await res.json();
-      if (dataJSON.success) {
-        router.push("/admin");
+    setError(null);
+    startTransition(async () => {
+      const response = await loginAction(data);
+      if (response?.error) {
+        setError(response.error);
       } else {
-        setError(dataJSON.message);
+        router.push("/dashboard");
       }
-    } catch (e: any) {
-      setError(e.message);
-    }
+    });
   };
 
   return (
@@ -93,6 +84,7 @@ export const LoginAdmin = () => {
                   id="password"
                   {...register("password")}
                   type="password"
+                  disabled={isPending}
                   autoComplete="current-password"
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />

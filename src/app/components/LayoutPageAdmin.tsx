@@ -1,15 +1,16 @@
+import { User } from "@/interfaces";
 import { FC, ReactNode } from "react";
-import Footer from "./Footer";
 import AdminSidebar from "./AdminSidebar";
-import { getCurrentUser } from "@/lib/auth";
 
 interface LayoutPageProps {
   children: ReactNode;
+  user: User;
 }
 
-export const LayoutPageAdmin: FC<LayoutPageProps> = async ({ children }) => {
-  const user = await getCurrentUser();
-
+export const LayoutPageAdmin: FC<LayoutPageProps> = async ({
+  user,
+  children,
+}) => {
   return (
     <div className="flex h-screen bg-gray-100">
       <AdminSidebar user={user} />
@@ -17,9 +18,5 @@ export const LayoutPageAdmin: FC<LayoutPageProps> = async ({ children }) => {
         <div className="container mx-auto px-6 py-8">{children}</div>
       </main>
     </div>
-    // <>
-    //   <main>{children}</main>
-    //   <Footer />
-    // </>
   );
 };
