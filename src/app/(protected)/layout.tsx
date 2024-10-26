@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import React from "react";
 import { LayoutPageAdmin } from "../components/LayoutPageAdmin";
+import { Toaster } from "react-hot-toast";
 
 export default async function ProtectedLayout({
   children,
@@ -11,5 +12,10 @@ export default async function ProtectedLayout({
 
   if (!session?.user) return null;
 
-  return <LayoutPageAdmin user={session.user.data}>{children}</LayoutPageAdmin>;
+  return (
+    <>
+      <LayoutPageAdmin user={session.user.data}>{children}</LayoutPageAdmin>
+      <Toaster />
+    </>
+  );
 }

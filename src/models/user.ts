@@ -1,6 +1,7 @@
 import { User } from "@/interfaces";
 import { executeQuery } from "@/lib/db";
-import { getRoles } from "./role";
+import { getRolesById } from "./role";
+import bcrypt from "bcryptjs";
 
 export async function getUserByEmail(email: string): Promise<User | null> {
   const users = await executeQuery<User[]>({
@@ -34,12 +35,12 @@ export async function getUser(id: string): Promise<User | null> {
   return {
     ...user,
     emailVerified: new Date(),
-    role: await getRoles(user.role_id),
+    role: await getRolesById(user.role_id),
   };
 }
 
 export async function createUser(
-  user: Omit<User, "id" | "created_at" | "updated_at">
+  user: Omit<User, "id" | "created_at" | "updated_at" | "role">
 ): Promise<User> {
   const result = await executeQuery<{ insertId: string }>({
     query: "INSERT INTO users SET ?",
@@ -47,4 +48,16 @@ export async function createUser(
   });
 
   return (await getUser(result.insertId)) as User;
+}
+
+export async function updateUser(
+  user: Omit<User, "id" | "created_at" | "updated_at" | "role">,
+  id: string
+): Promise<User> {
+  const result = await executeQuery<{ insertId: string }>({
+    query: "UPDATE users SET ? WHERE id=?",
+    values: [user, id],
+  });
+
+  return (await getUser(id)) as User;
 }

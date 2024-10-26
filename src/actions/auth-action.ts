@@ -45,6 +45,7 @@ export const registerAction = async (values: z.infer<typeof signupSchema>) => {
       email: data.email,
       password: hashedPassword,
       role_id: "2",
+      lastname: "xxx",
       username: data.username,
     });
 

@@ -1,14 +1,8 @@
-import { auth } from "@/auth";
-import { PERMISSIONS } from "@/interfaces";
-import { hasPermission } from "@/lib/hasPermission";
-import React from "react";
+import { PageUI } from "@/app/components/Page/Page";
+import { PageButton } from "@/app/components/Page/PageButton";
+import { PageTitle } from "@/app/components/Page/PageTitle";
+import RolesPageView from "@/app/components/Roles/RolesPageView";
 
 export default async function DashboardPage() {
-  const permission = await hasPermission([PERMISSIONS.DASHBOARD_VIEW]);
-
-  if (!permission) {
-    return <div>Unauthorized</div>;
-  }
-
   return <div>Dashboard</div>;
 }

@@ -106,6 +106,7 @@ export interface UserSession {
 export interface User {
   id: string;
   username: string;
+  lastname: string;
   email: string;
   password: string; // Nota: Esto solo debe usarse para creación/actualización, nunca debe enviarse al cliente
   role_id: string;
@@ -113,15 +114,15 @@ export interface User {
   created_at?: Date;
   updated_at?: Date;
   emailVerified?: Date;
-  role?: Role | null; // Relación con Role, opcional porque no siempre se cargará
+  role: Role; // Relación con Role, opcional porque no siempre se cargará
 }
 
 export interface Role {
   id: string;
-  name: string;
+  name: RoleName.ADMIN | RoleName.SUPERADMIN;
   created_at: Date;
   updated_at: Date;
-  permissions: PermissionName[] | null; // Cambiado a PermissionName[] para consistencia
+  sections: Section[];
 }
 
 // Mantenemos la interfaz Permission para la base de datos
@@ -159,6 +160,35 @@ export enum PERMISSIONS {
   USERS_CREATE = "users.create",
   USERS_EDIT = "users.edit",
   USERS_DELETE = "users.delete",
+}
+
+export interface Section {
+  id: string;
+  name: string;
+  url: string;
+  image: string;
+}
+
+export enum PermissionTextName {
+  VIEW = "view",
+  CREATE = "create",
+  DELETE = "delete",
+  EDIT = "edit",
+}
+
+export enum RoleName {
+  SUPERADMIN = "superadmin",
+  ADMIN = "admin",
+}
+
+export type PermissionText =
+  | PermissionTextName.VIEW
+  | PermissionTextName.CREATE
+  | PermissionTextName.DELETE
+  | PermissionTextName.EDIT;
+
+export interface GroupedPermissions {
+  [key: string]: string[];
 }
 
 export type PermissionName =

@@ -16,7 +16,7 @@ export default middleware(async (req) => {
 
   const session = await auth();
 
-  console.log(session);
+  // console.log(session);
 
   // Permitir todas las rutas de API de autenticación
   if (nextUrl.pathname.startsWith(apiAuthPrefix)) {

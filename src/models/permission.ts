@@ -14,3 +14,14 @@ export async function getPermissions(
 
   return permissions.map((permission) => permission.name);
 }
+
+export async function deletePermission(permissionName: string) {
+  // console.log("remove permissionName", permissionName);
+  const queryPermission = await executeQuery({
+    query: `DELETE FROM permissions WHERE name like ?`,
+    values: [permissionName + ".%"],
+  });
+  if (queryPermission) {
+    return queryPermission;
+  }
+}

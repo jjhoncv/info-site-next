@@ -1,7 +1,7 @@
 "use client";
 
 import { PermissionName, User } from "@/interfaces";
-import { signOut } from "next-auth/react";
+import { HomeIcon, LayoutGrid, TableOfContents } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -16,62 +16,58 @@ interface MenuItem {
   icon?: string; // Opcional: para iconos si decides añadirlos
 }
 
-const base = `/dashboard`;
-
-const menuItems: MenuItem[] = [
-  { label: "Dashboard", href: `${base}`, permission: "dashboard.view" },
-  { label: "Banners", href: `${base}/banners`, permission: "banners.view" },
-  {
-    label: "Servicios",
-    href: `${base}/services`,
-    permission: "services.view",
-  },
-  {
-    label: "Proyectos",
-    href: `${base}/projects`,
-    permission: "projects.view",
-  },
-  { label: "Páginas", href: `${base}/pages`, permission: "pages.view" },
-  { label: "Galería", href: `${base}/gallery`, permission: "gallery.view" },
-  { label: "Usuarios", href: `${base}/users`, permission: "users.view" },
-];
-
 const AdminSidebar: React.FC<AdminSidebarProps> = ({ user }) => {
   const pathname = usePathname();
-
-  const hasPermission = (permission: PermissionName): boolean => {
-    if (!user) return false;
-
-    return user?.role?.permissions?.includes(permission) ?? false;
-  };
+  const menuItems = user.role?.sections.flat();
 
   return (
     <aside className="bg-gray-800 text-white w-64 min-h-screen p-4">
       <div className="mb-6">
         <h2 className="text-2xl font-semibold">Admin Panel</h2>
-        <p className="text-sm text-gray-400">Bienvenido, {user?.username} </p>
       </div>
       <nav>
-        <ul>
-          {menuItems.map(
-            (item) =>
-              hasPermission(item.permission) && (
-                <li key={item.href} className="mb-2">
+        <Link
+          className={`block p-2 rounded hover:bg-gray-700`}
+          href="/dashboard"
+        >
+          <div className="flex gap-3 items-center capitalize">
+            <HomeIcon style={{ strokeWidth: 0.9 }} color="white" size={20} />
+            Dashboard
+          </div>
+        </Link>
+        {menuItems.length > 0 && (
+          <>
+            <div className="flex gap-2 p-2 hover:bg-gray-700">
+              <LayoutGrid
+                style={{ strokeWidth: 0.9 }}
+                color="white"
+                size={22}
+              />
+              Secciones
+            </div>
+            <ul className="ml-8">
+              {menuItems.map((item) => (
+                <li key={item.id} className="mb-2">
                   <Link
-                    href={item.href}
+                    href={item.url}
                     className={`block p-2 rounded hover:bg-gray-700 ${
-                      pathname === item.href ? "bg-gray-700" : ""
+                      pathname === item.url ? "bg-gray-700" : ""
                     }`}
                   >
-                    {item.label}
+                    <div className="flex gap-3 items-center capitalize">
+                      <TableOfContents
+                        style={{ strokeWidth: 0.9 }}
+                        color="white"
+                        size={20}
+                      />
+                      {item.name}
+                    </div>
                   </Link>
                 </li>
-              )
-          )}
-        </ul>
-        <button onClick={() => signOut({ callbackUrl: "/login" })}>
-          Logout
-        </button>
+              ))}
+            </ul>
+          </>
+        )}
       </nav>
     </aside>
   );
