@@ -1,9 +1,9 @@
 // pages/api/login.ts
 import { NextRequest, NextResponse } from "next/server";
 import { serialize } from "cookie";
-import { getUserByEmail, getUserById } from "@/services/userService";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { getUserByEmail } from "@/models/user";
 
 const cookieOptions = {
   httpOnly: true,

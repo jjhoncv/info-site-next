@@ -67,3 +67,12 @@ export async function removeRoleSection({
 
   return result.insertId;
 }
+
+export async function removeAllSectionByRole({ roleId }: { roleId: string }) {
+  const result = await executeQuery<{ insertId: string }>({
+    query: "DELETE FROM roles_sections WHERE id_rol= ?",
+    values: [roleId],
+  });
+
+  return result.insertId;
+}

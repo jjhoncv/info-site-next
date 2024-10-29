@@ -2,7 +2,7 @@
 import { Role, User } from "@/interfaces";
 import { FetchCustomBody } from "@/lib/FetchCustomBody";
 import { ToastFail, ToastSuccess } from "@/lib/splash";
-import { userEditSchema } from "@/lib/zod";
+import { profileEditSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -12,15 +12,14 @@ import { z } from "zod";
 import { Input } from "../Form/Input/Input";
 import { Select } from "../Form/Input/Select";
 
-interface UserEditViewProps {
-  roles: Role[];
+interface ProfileEditViewProps {
   user: User;
 }
 
 // Infiere el tipo del esquema
-export type userEditFormData = z.infer<typeof userEditSchema>;
+export type userEditFormData = z.infer<typeof profileEditSchema>;
 
-export const UserEditView: FC<UserEditViewProps> = ({ user, roles }) => {
+export const ProfileEditView: FC<ProfileEditViewProps> = ({ user }) => {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [disabledPassword, setDisabledPassword] = useState(true);
@@ -33,14 +32,12 @@ export const UserEditView: FC<UserEditViewProps> = ({ user, roles }) => {
     trigger,
     reset,
   } = useForm<userEditFormData>({
-    resolver: zodResolver(userEditSchema),
+    resolver: zodResolver(profileEditSchema),
     defaultValues: {
       username: user.username,
       lastname: user.lastname,
       email: user.email,
       password: "------",
-      roles: user.role_id.toString(), // Inicializar el campo roles
-      passwordChange: false,
     },
     mode: "onChange",
   });
@@ -51,7 +48,6 @@ export const UserEditView: FC<UserEditViewProps> = ({ user, roles }) => {
         data: {
           ...data,
           id: user.id,
-          role_id: data.roles,
         },
         method: "PATCH",
         url: "/api/admin/users",
@@ -109,30 +105,6 @@ export const UserEditView: FC<UserEditViewProps> = ({ user, roles }) => {
               disabled={disabledPassword}
               onKeyDown={handleKeyDown}
             />
-            <div className="flex gap-3 items-center mt-2">
-              <input
-                {...register("passwordChange")}
-                onChange={() => {
-                  setDisabledPassword(!disabledPassword);
-                  if (disabledPassword) {
-                    setValue("password", "");
-                  } else {
-                    setValue("password", "------");
-                    trigger("password");
-                  }
-                }}
-                onKeyDown={handleKeyDown}
-                className="w-4 h-4"
-                type="checkbox"
-                id="password-change"
-              />
-              {errors.passwordChange && (
-                <p className="text-sm text-red-600">
-                  {errors.passwordChange.message}
-                </p>
-              )}
-              <label htmlFor="password-change">Cambiar password</label>
-            </div>
           </div>
         </div>
         <div className="w-1/2 flex flex-col">
@@ -146,7 +118,7 @@ export const UserEditView: FC<UserEditViewProps> = ({ user, roles }) => {
             />
           </div>
 
-          <div className="flex flex-col gap-1 mb-4">
+          {/* <div className="flex flex-col gap-1 mb-4">
             <Select error={errors.roles} label="Roles" {...register("roles")}>
               <option value="">Seleccione rol</option>
               {roles.map(({ id, name }) => (
@@ -155,7 +127,7 @@ export const UserEditView: FC<UserEditViewProps> = ({ user, roles }) => {
                 </option>
               ))}
             </Select>
-          </div>
+          </div> */}
         </div>
       </div>
 

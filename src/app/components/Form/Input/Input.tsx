@@ -4,7 +4,7 @@ import { FieldError } from "react-hook-form";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
-  type: "text" | "email" | "password";
+  type: "text" | "email" | "password" | "checkbox";
   error?: FieldError | undefined;
 }
 

@@ -58,74 +58,86 @@ export const UserNewView: FC<UserNewViewProps> = ({ roles }) => {
     }
   };
 
+  const handleKeyDown = async (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const form = e.currentTarget.closest("form");
+      if (form) {
+        form.requestSubmit();
+      }
+    }
+  };
+
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        {error && <div className="text-red-600">{error}</div>}
+    <form onSubmit={handleSubmit(onSubmit)}>
+      {error && <div className="text-red-600">{error}</div>}
 
-        <div className="flex justify-between w-full gap-5">
-          <div className="w-1/2 flex flex-col">
-            <div className="flex flex-col gap-1 mb-4">
-              <Input
-                {...register("username")}
-                error={errors.username}
-                label="Nombres"
-                type="text"
-              />
-            </div>
-            <div className="flex flex-col gap-1 mb-4">
-              <Input
-                {...register("email")}
-                label="Email"
-                type="email"
-                error={errors.email}
-              />
-            </div>
-
-            <div className="flex flex-col gap-1 mb-4">
-              <Input
-                {...register("password")}
-                error={errors.password}
-                label="Password"
-                type="password"
-              />
-            </div>
+      <div className="flex justify-between w-full gap-5">
+        <div className="w-1/2 flex flex-col">
+          <div className="flex flex-col gap-1 mb-4">
+            <Input
+              {...register("username")}
+              error={errors.username}
+              label="Nombres"
+              type="text"
+              onKeyDown={handleKeyDown}
+            />
           </div>
-          <div className="w-1/2 flex flex-col">
-            <div className="flex flex-col gap-1 mb-4">
-              <Input
-                {...register("lastname")}
-                error={errors.lastname}
-                label="Apellidos"
-                type="text"
-              />
-            </div>
+          <div className="flex flex-col gap-1 mb-4">
+            <Input
+              {...register("email")}
+              label="Email"
+              type="email"
+              error={errors.email}
+              onKeyDown={handleKeyDown}
+            />
+          </div>
 
-            <div className="flex flex-col gap-1 mb-4">
-              <Select error={errors.roles} label="Roles" {...register("roles")}>
-                <option value="">Seleccione rol</option>
-                {roles.map(({ id, name }) => (
-                  <option key={id} value={id}>
-                    {name}
-                  </option>
-                ))}
-              </Select>
-            </div>
+          <div className="flex flex-col gap-1 mb-4">
+            <Input
+              {...register("password")}
+              error={errors.password}
+              label="Password"
+              type="password"
+              onKeyDown={handleKeyDown}
+            />
           </div>
         </div>
+        <div className="w-1/2 flex flex-col">
+          <div className="flex flex-col gap-1 mb-4">
+            <Input
+              {...register("lastname")}
+              error={errors.lastname}
+              label="Apellidos"
+              type="text"
+              onKeyDown={handleKeyDown}
+            />
+          </div>
 
-        <div className="flex gap-3 mb-4 justify-end mt-8">
-          <Link href="/dashboard/users">
-            <button className="border rounded px-6 py-2">Cancel</button>
-          </Link>
-          <button
-            className="bg-[#374151] text-white  rounded px-6 py-2"
-            type="submit"
-          >
-            Añadir
-          </button>
+          <div className="flex flex-col gap-1 mb-4">
+            <Select error={errors.roles} label="Roles" {...register("roles")}>
+              <option value="">Seleccione rol</option>
+              {roles.map(({ id, name }) => (
+                <option key={id} value={id}>
+                  {name}
+                </option>
+              ))}
+            </Select>
+          </div>
         </div>
-      </form>
-    </div>
+      </div>
+
+      <div className="flex gap-3 mb-4 justify-end mt-8">
+        <Link href="/dashboard/users">
+          <button className="border rounded px-6 py-2">Cancelar</button>
+        </Link>
+        <button
+          className="bg-[#374151] text-white  rounded px-6 py-2"
+          type="submit"
+        >
+          Añadir
+        </button>
+      </div>
+    </form>
   );
 };

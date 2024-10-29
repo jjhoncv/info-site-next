@@ -8,7 +8,7 @@ export type ActionOption = "edit" | "delete";
 
 export interface TableColumn {
   key: string;
-  label: string;
+  label: ReactNode | string;
   width?: string;
   render?: (value: any) => ReactNode;
 }
@@ -47,7 +47,7 @@ export const DynamicTable: FC<DynamicTableProps> = ({
   // Función para renderizar las acciones
   const renderActions = (itemId: string) => {
     return (
-      <td className="py-3 flex gap-2">
+      <td className="py-3 flex gap-2 items-center">
         {actions.edit && (
           <Link
             href={`${baseUrl}/${itemId}`}
@@ -59,7 +59,7 @@ export const DynamicTable: FC<DynamicTableProps> = ({
               }
             }}
           >
-            <PencilIcon size={20} />
+            <PencilIcon size={16} />
           </Link>
         )}
         {actions.delete && (
@@ -67,7 +67,7 @@ export const DynamicTable: FC<DynamicTableProps> = ({
             onClick={() => onDelete?.(itemId)}
             className="hover:text-red-600 transition-colors"
           >
-            <TrashIcon size={20} />
+            <TrashIcon size={16} />
           </button>
         )}
       </td>
@@ -88,7 +88,7 @@ export const DynamicTable: FC<DynamicTableProps> = ({
               </th>
             ))}
             {(actions.edit || actions.delete) && (
-              <th className="text-left pb-3 w-20">Opciones</th>
+              <th className="text-left pb-3">Opciones</th>
             )}
           </tr>
         </thead>

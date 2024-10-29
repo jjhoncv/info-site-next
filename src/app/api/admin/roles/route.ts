@@ -1,101 +1,69 @@
-import { userCreateFormData } from "@/app/components/Users/UserNewView";
-import { createUser, removeUser, updateUser } from "@/models/user";
+import { roleCreateFormData } from "@/app/components/Roles/RoleNewView";
+import { Role, RoleName } from "@/interfaces";
+import { createRole, removeRole, updateRole } from "@/models/role";
+import { getSection, removeAllSectionByRole } from "@/models/sections";
+import { updateUser } from "@/models/user";
 import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const {
-      username,
-      email,
-      lastname,
-      password,
-      roles: role_id,
-    }: userCreateFormData = body;
+    const { name, sections: sections_ids }: roleCreateFormData = body;
 
     // Validar los datos de entrada
-    if (!username || !email || !password || !lastname) {
+    if (!name) {
       return NextResponse.json(
         { error: "Missing required fields", success: false },
         { status: 400 }
       );
     }
 
-    // Encriptar la contraseña
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const sections = await Promise.all(
+      sections_ids.map(async (section_id) => await getSection(section_id))
+    );
 
-    // Crear el usuario en la base de datos
-    const user = await createUser({
-      email,
-      is_active: true,
-      password: hashedPassword,
-      role_id,
-      username,
-      lastname,
-    });
+    const role = await createRole(
+      {
+        name: name as RoleName,
+      },
+      sections
+    );
 
     const response = NextResponse.json(
       {
-        message: "Usuario creado",
+        message: "Rol creado",
         success: true,
-        user,
+        role,
       },
       { status: 200 }
     );
 
     return response;
   } catch (error) {
-    console.error("Error Creating user in:", error);
+    console.error("Error Creating role in:", error);
   }
 }
 
 export async function PATCH(req: NextRequest) {
   try {
     const body = await req.json();
-    const {
-      id,
-      username,
-      email,
-      lastname,
-      password,
-      roles: role_id,
-      passwordChange,
-    }: any = body;
+    const { name, role_id, sections }: any = body;
 
     // Validar los datos de entrada
-    if (!username || !email || !password || !lastname) {
+    if (!name || !role_id) {
       return NextResponse.json(
         { error: "Missing required fields", success: false },
         { status: 400 }
       );
     }
 
-    let objUser: any = {
-      email,
-      is_active: true,
-      role_id,
-      username,
-      lastname,
-    };
-
-    if (passwordChange) {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-
-      objUser = {
-        ...objUser,
-        password: hashedPassword,
-      };
-    }
-
     try {
-      const user = await updateUser(objUser, id);
+      const user = await updateRole({ name }, sections, role_id);
 
       const response = NextResponse.json(
         {
-          message: "Usuario actualizado",
+          message: "Rol actualizado",
           success: true,
           user,
         },
@@ -104,10 +72,10 @@ export async function PATCH(req: NextRequest) {
         }
       );
       return response;
-    } catch (error) {
+    } catch (error: any) {
       const response = NextResponse.json(
         {
-          message: "El email ya esta siendo usado",
+          message: error.message,
           success: false,
         },
         { status: 400 }
@@ -122,10 +90,10 @@ export async function PATCH(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     const body = await req.json();
-    const { user_id }: any = body;
+    const { role_id }: any = body;
 
     // Validar los datos de entrada
-    if (!user_id) {
+    if (!role_id) {
       return NextResponse.json(
         { error: "Missing required fields", success: false },
         { status: 400 }
@@ -133,11 +101,12 @@ export async function DELETE(req: NextRequest) {
     }
 
     try {
-      await removeUser(user_id);
+      await removeRole(role_id);
+      await removeAllSectionByRole({ roleId: role_id });
 
       const response = NextResponse.json(
         {
-          message: "Usuario eliminado",
+          message: "Rol eliminado",
           success: true,
         },
         {
@@ -156,6 +125,6 @@ export async function DELETE(req: NextRequest) {
       return response;
     }
   } catch (error) {
-    console.error("Error eliminando usuario en:", error);
+    console.error("Error actualizando usuario en:", error);
   }
 }

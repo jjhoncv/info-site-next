@@ -1,6 +1,6 @@
 interface FetchCustomBody {
   url: string;
-  method: "PUT" | "PATCH" | "POST";
+  method: "PUT" | "PATCH" | "POST" | "DELETE";
   data: any;
 }
 

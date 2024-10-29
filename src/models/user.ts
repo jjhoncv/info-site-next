@@ -1,6 +1,6 @@
 import { User } from "@/interfaces";
 import { executeQuery } from "@/lib/db";
-import { getRolesById } from "./role";
+import { getRole } from "./role";
 import bcrypt from "bcryptjs";
 
 export async function getUserByEmail(email: string): Promise<User | null> {
@@ -35,7 +35,7 @@ export async function getUser(id: string): Promise<User | null> {
   return {
     ...user,
     emailVerified: new Date(),
-    role: await getRolesById(user.role_id),
+    role: await getRole(user.role_id),
   };
 }
 
@@ -60,4 +60,11 @@ export async function updateUser(
   });
 
   return (await getUser(id)) as User;
+}
+
+export async function removeUser(id: string) {
+  await executeQuery<{ insertId: string }>({
+    query: "DELETE FROM users WHERE id=?",
+    values: [id],
+  });
 }
