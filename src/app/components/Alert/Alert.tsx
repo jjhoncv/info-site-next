@@ -1,5 +1,6 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { FC } from "react";
+import { Button } from "../Form/Input/Button";
 
 interface AlertProps {
   message: React.ReactNode;
@@ -43,20 +44,14 @@ export const Alert: FC<AlertProps> = ({
             <hr />
             <div className="gap-2 flex justify-end p-4">
               {onCancel && (
-                <button
-                  className="border border-gray-400 text-[#374151]  rounded px-6 py-2"
-                  onClick={onCancel}
-                >
+                <Button outline type="button" onClick={onCancel}>
                   Cancelar
-                </button>
+                </Button>
               )}
               {onSuccess && (
-                <button
-                  className="bg-[#374151] text-white  rounded px-6 py-2"
-                  onClick={onSuccess}
-                >
-                  <div className="flex gap-2 items-center">Aceptar</div>
-                </button>
+                <Button type="button" onClick={onSuccess}>
+                  Aceptar
+                </Button>
               )}
             </div>
           </div>

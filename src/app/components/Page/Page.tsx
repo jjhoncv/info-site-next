@@ -53,7 +53,7 @@ export const PageUI: FC<PageUIProps> = ({
 
         {options && <div>{options}</div>}
       </div>
-      <div className="p-5 border rounded-lg bg-white my-7">{children}</div>
+      {children}
     </div>
   );
 };

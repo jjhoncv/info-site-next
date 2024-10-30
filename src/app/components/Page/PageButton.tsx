@@ -1,6 +1,7 @@
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 import React, { FC } from "react";
+import { Button } from "../Form/Input/Button";
 
 interface PageButtonProps {
   children: React.ReactNode;
@@ -9,15 +10,11 @@ interface PageButtonProps {
 
 export const PageButton: FC<PageButtonProps> = ({ children, href }) => {
   return (
-    <Link href={href}>
-      <button
-        className="bg-[#374151] text-white  rounded px-6 py-2"
-        type="submit"
-      >
-        <div className="flex gap-2 items-center">
-          <PlusIcon size={20} /> {children}
-        </div>
-      </button>
-    </Link>
+    <Button type="link" href={href}>
+      <div className="flex gap-2 items-center">
+        <PlusIcon size={20} />
+        {children}
+      </div>
+    </Button>
   );
 };

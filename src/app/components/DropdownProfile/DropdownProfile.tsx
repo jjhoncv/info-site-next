@@ -1,7 +1,7 @@
 "use client";
 
 import { RoleName, User } from "@/interfaces";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, UserCircle2Icon } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import React, { FC, useState, useEffect, useRef } from "react";
@@ -118,7 +118,7 @@ export const DropdownProfile: FC<DropdownProfileProps> = ({ user }) => {
     <div className="relative" ref={dropdownRef}>
       <div
         onClick={() => setOpen(!open)}
-        className="flex cursor-pointer gap-2 px-4 py-2 bg-white border rounded-lg items-center hover:bg-gray-50 transition-colors"
+        className="flex cursor-pointer gap-2 px-4 py-2 bg-white  rounded-lg items-center border hover:border-slate-300 hover:bg-slate-100 transition-colors"
         role="button"
         aria-haspopup="true"
         aria-expanded={open}
@@ -131,12 +131,12 @@ export const DropdownProfile: FC<DropdownProfileProps> = ({ user }) => {
         }}
       >
         <div
-          className="uppercase rounded-full text-white bg-gray-800 w-[30px] h-[30px] flex justify-center items-center"
+          className="uppercase rounded-full text-white w-[30px] h-[30px] flex justify-center items-center"
           aria-label={`${user.username} ${user.lastname} avatar`}
         >
-          {getInitials(user.username, user.lastname)}
+          <UserCircle2Icon size={30} strokeWidth={1} color="#374151" />
         </div>
-        <div className="mr-4 font-medium">{`${user.username} ${user.lastname}`}</div>
+        <div className="mr-4 font-medium hidden md:block">{`${user.username} ${user.lastname}`}</div>
         {open ? (
           <ChevronUp size={20} className="text-gray-500" />
         ) : (

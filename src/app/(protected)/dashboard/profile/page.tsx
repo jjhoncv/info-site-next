@@ -13,7 +13,7 @@ export default async function ProfileEditPage() {
     <PageUI
       title={<PageTitle title="Perfil" />}
       breadcrumb={[{ label: "Perfil Usuario" }]}
-      subtitle="Perfil usuario"
+      subtitle="Informacion de usuario"
     >
       <ProfileEditView user={session?.user.data} />
     </PageUI>

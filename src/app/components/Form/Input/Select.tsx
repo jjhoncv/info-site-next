@@ -9,12 +9,12 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
   ({ label, error, children, className = "", ...props }, ref) => {
-    const selectClassName = `w-full border rounded px-2 h-[42px] ${
-      error ? "border-red-500" : "border-gray-300"
+    const selectClassName = `bg-slate-100 w-full border rounded px-2 py-2 ${
+      error ? "border-red-500" : "border-gray-200 hover:border-gray-300"
     } focus:outline-none focus:ring-2 focus:ring-gray-200 ${className}`;
 
     return (
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 ">
         {label && (
           <label className="text-sm font-bold" htmlFor={props.id || props.name}>
             {label}

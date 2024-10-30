@@ -1,15 +1,12 @@
-import { roleCreateFormData } from "@/app/components/Roles/RoleNewView";
-import { Role, RoleName } from "@/interfaces";
+import { RoleName } from "@/interfaces";
 import { createRole, removeRole, updateRole } from "@/models/role";
 import { getSection, removeAllSectionByRole } from "@/models/sections";
-import { updateUser } from "@/models/user";
-import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, sections: sections_ids }: roleCreateFormData = body;
+    const { name, sections: sections_ids }: any = body;
 
     // Validar los datos de entrada
     if (!name) {
@@ -20,7 +17,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const sections = await Promise.all(
-      sections_ids.map(async (section_id) => await getSection(section_id))
+      sections_ids.map(async (section_id: any) => await getSection(section_id))
     );
 
     const role = await createRole(
@@ -48,10 +45,10 @@ export async function PUT(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, role_id, sections }: any = body;
+    const { name, id, sections }: any = body;
 
     // Validar los datos de entrada
-    if (!name || !role_id) {
+    if (!name || !id) {
       return NextResponse.json(
         { error: "Missing required fields", success: false },
         { status: 400 }
@@ -59,7 +56,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     try {
-      const user = await updateRole({ name }, sections, role_id);
+      const user = await updateRole({ name }, sections, id);
 
       const response = NextResponse.json(
         {

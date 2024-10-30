@@ -47,11 +47,11 @@ export const DynamicTable: FC<DynamicTableProps> = ({
   // Función para renderizar las acciones
   const renderActions = (itemId: string) => {
     return (
-      <td className="py-3 flex gap-2 items-center">
+      <td className="py-3 flex gap-3 items-center">
         {actions.edit && (
           <Link
             href={`${baseUrl}/${itemId}`}
-            className="hover:text-blue-600 transition-colors"
+            className="hover:text-blue-600 transition-colors hover:bg-slate-300 hover:border-slate-500 border-transparent p-2 rounded-full"
             onClick={(e) => {
               if (onEdit) {
                 e.preventDefault();
@@ -59,15 +59,15 @@ export const DynamicTable: FC<DynamicTableProps> = ({
               }
             }}
           >
-            <PencilIcon size={16} />
+            <PencilIcon size={18} />
           </Link>
         )}
         {actions.delete && (
           <button
             onClick={() => onDelete?.(itemId)}
-            className="hover:text-red-600 transition-colors"
+            className="hover:text-red-600 transition-colors hover:bg-slate-300 hover:border-slate-500 border-transparent p-2 rounded-full"
           >
-            <TrashIcon size={16} />
+            <TrashIcon size={18} />
           </button>
         )}
       </td>

@@ -1,11 +1,12 @@
 "use client";
 import { Role, Section } from "@/interfaces";
-import { FC, useState } from "react";
-import { DynamicTable } from "../Table/DynamicTable";
 import { FetchCustomBody } from "@/lib/FetchCustomBody";
 import { ToastFail, ToastSuccess } from "@/lib/splash";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { FC } from "react";
 import { Alert } from "../Alert/Alert";
+import { CardContent } from "../CardContent/CardContent";
+import { DynamicTable } from "../Table/DynamicTable";
 
 interface RolesListViewProps {
   roles: Role[];
@@ -83,7 +84,7 @@ export const RolesListView: FC<RolesListViewProps> = ({ roles, sections }) => {
   };
 
   return (
-    <>
+    <CardContent>
       <Alert
         message="¿Estás seguro de eliminar este rol?"
         onSuccess={() => {
@@ -107,6 +108,6 @@ export const RolesListView: FC<RolesListViewProps> = ({ roles, sections }) => {
           router.replace("/dashboard/roles?action=alert&id=" + id);
         }}
       />
-    </>
+    </CardContent>
   );
 };

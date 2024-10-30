@@ -18,9 +18,9 @@ export const LayoutPageAdmin: FC<LayoutPageProps> = async ({
   return (
     <div className="flex h-screen bg-gray-100">
       <AdminSidebar user={user} />
-      <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-        <div className="mx-auto p-10 pt-5 container">
-          <div className="flex con h-[70px] items-center justify-end relative mb-5">
+      <main className="flex-1 overflow-x-hidden overflow-y-auto ">
+        <div className="mx-auto md:p-10 p-5 pt-5 container">
+          <div className="flex h-[40px] items-center justify-end relative mb-5">
             <DropdownProfile user={user} />
           </div>
           {children}

@@ -26,26 +26,36 @@ export async function PUT(req: NextRequest) {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Crear el usuario en la base de datos
-    const user = await createUser({
-      email,
-      is_active: true,
-      password: hashedPassword,
-      role_id,
-      username,
-      lastname,
-    });
+    try {
+      const user = await createUser({
+        email,
+        is_active: true,
+        password: hashedPassword,
+        role_id,
+        username,
+        lastname,
+      });
 
-    const response = NextResponse.json(
-      {
-        message: "Usuario creado",
-        success: true,
-        user,
-      },
-      { status: 200 }
-    );
+      const response = NextResponse.json(
+        {
+          message: "Usuario creado",
+          success: true,
+          user,
+        },
+        { status: 200 }
+      );
 
-    return response;
+      return response;
+    } catch (error: any) {
+      const response = NextResponse.json(
+        {
+          message: error.sqlMessage,
+          success: false,
+        },
+        { status: 400 }
+      );
+      return response;
+    }
   } catch (error) {
     console.error("Error Creating user in:", error);
   }
@@ -104,10 +114,10 @@ export async function PATCH(req: NextRequest) {
         }
       );
       return response;
-    } catch (error) {
+    } catch (error: any) {
       const response = NextResponse.json(
         {
-          message: "El email ya esta siendo usado",
+          message: error.sqlMessage,
           success: false,
         },
         { status: 400 }

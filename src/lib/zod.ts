@@ -19,13 +19,6 @@ export const userCreateSchema = object({
   password: string().min(6, "Password debe de tener como mínimo 6 caracteres"),
 });
 
-export const profileEditSchema = object({
-  username: string().min(1, "Nombres es requerido"),
-  lastname: string().min(1, "Apellidos es requerido"),
-  email: string().email("El email es inválido"),
-  password: string().min(6, "Password debe de tener como mínimo 6 caracteres"),
-});
-
 export const userEditSchema = object({
   username: string().min(1, "Nombres es requerido"),
   lastname: string().min(1, "Apellidos es requerido"),
@@ -35,12 +28,15 @@ export const userEditSchema = object({
   password: string().min(6, "Password debe de tener como mínimo 6 caracteres"),
 });
 
-export const roleCreateSchema = object({
-  name: string().min(1, "Nombre es requerido"),
-  sections: z.array(z.string()).min(1, "Seleccione al menos una sección"),
+export const profileEditSchema = object({
+  username: string().min(1, "Nombres es requerido"),
+  lastname: string().min(1, "Apellidos es requerido"),
+  email: string().email("El email es inválido"),
+  passwordChange: boolean(),
+  password: string().min(6, "Password debe de tener como mínimo 6 caracteres"),
 });
 
-export const roleEditSchema = object({
+export const roleSchema = object({
   name: string().min(1, "Nombre es requerido"),
   sections: z.array(z.string()).min(1, "Seleccione al menos una sección"),
 });

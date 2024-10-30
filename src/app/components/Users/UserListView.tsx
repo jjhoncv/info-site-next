@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { FetchCustomBody } from "@/lib/FetchCustomBody";
 import { ToastFail, ToastSuccess } from "@/lib/splash";
 import { Alert } from "../Alert/Alert";
+import { CardContent } from "../CardContent/CardContent";
 
 interface UserListViewProps {
   users: User[];
@@ -56,7 +57,7 @@ export const UserListView: FC<UserListViewProps> = ({ users }) => {
   };
 
   return (
-    <>
+    <CardContent>
       <Alert
         message="¿Estás seguro de eliminar este usuario?"
         onSuccess={() => {
@@ -80,6 +81,6 @@ export const UserListView: FC<UserListViewProps> = ({ users }) => {
           router.replace("/dashboard/users?action=alert&id=" + id);
         }}
       />
-    </>
+    </CardContent>
   );
 };
