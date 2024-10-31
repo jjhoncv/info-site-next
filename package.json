@@ -24,6 +24,7 @@
     "react-image-crop": "^11.0.6",
     "react-quill": "^2.0.0",
     "serverless-mysql": "^1.5.5",
+    "usehooks-ts": "^3.1.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

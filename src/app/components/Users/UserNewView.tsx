@@ -60,8 +60,8 @@ export const UserNewView: FC<UserNewViewProps> = ({ roles }) => {
   return (
     <CardContent>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex justify-between w-full gap-8">
-          <div className="w-1/2 flex flex-col">
+        <div className="md:grid-cols-2 grid w-full md:gap-6 ">
+          <div className="flex w-full flex-col">
             <div className="flex flex-col gap-1 mb-4">
               <Input
                 {...register("username")}
@@ -73,31 +73,21 @@ export const UserNewView: FC<UserNewViewProps> = ({ roles }) => {
             </div>
             <div className="flex flex-col gap-1 mb-4">
               <Input
-                {...register("email")}
-                label="Email"
-                type="email"
-                error={errors.email}
-                onKeyDown={handleKeyDown}
-              />
-            </div>
-
-            <div className="flex flex-col gap-1 mb-4">
-              <Input
-                {...register("password")}
-                error={errors.password}
-                label="Password"
-                type="password"
-                onKeyDown={handleKeyDown}
-              />
-            </div>
-          </div>
-          <div className="w-1/2 flex flex-col">
-            <div className="flex flex-col gap-1 mb-4">
-              <Input
                 {...register("lastname")}
                 error={errors.lastname}
                 label="Apellidos"
                 type="text"
+                onKeyDown={handleKeyDown}
+              />
+            </div>
+          </div>
+          <div className="flex w-full flex-col">
+            <div className="flex flex-col gap-1 mb-4">
+              <Input
+                {...register("email")}
+                label="Email"
+                type="email"
+                error={errors.email}
                 onKeyDown={handleKeyDown}
               />
             </div>
@@ -111,6 +101,17 @@ export const UserNewView: FC<UserNewViewProps> = ({ roles }) => {
                   </option>
                 ))}
               </Select>
+            </div>
+          </div>
+          <div className="flex w-full flex-col">
+            <div className="flex flex-col gap-1 mb-4">
+              <Input
+                {...register("password")}
+                error={errors.password}
+                label="Password"
+                type="password"
+                onKeyDown={handleKeyDown}
+              />
             </div>
           </div>
         </div>

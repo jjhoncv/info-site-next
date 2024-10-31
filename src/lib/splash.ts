@@ -2,8 +2,8 @@ import toast, { ToastOptions } from "react-hot-toast";
 
 export const ToastSuccess = (message: string) => {
   const options: ToastOptions = {
-    duration: 2000,
-    position: "top-right",
+    duration: 3000,
+    position: "top-center",
     style: {
       background: "#10B981",
       color: "#fff",
@@ -15,7 +15,7 @@ export const ToastSuccess = (message: string) => {
 
 export const ToastFail = (message: string) => {
   const options: ToastOptions = {
-    duration: 3000,
+    duration: 4000,
     position: "top-right",
     style: {
       background: "#EF4444",

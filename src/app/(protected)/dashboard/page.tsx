@@ -9,12 +9,12 @@ export default async function DashboardPage() {
   return (
     <div>
       <h1 className="font-semibold text-2xl">Dashboard</h1>
-      <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-5 grid-cols-2">
+      <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-5 grid-cols-2 mt-5 md:mt-0">
         {sections.map((section, index) => {
           return (
             <Link href={section.url} className="h-[140px] lg:h-full">
               <CardContent
-                className={`gap-2 flex flex-col items-center border-transparent hover:bg-slate-300 capitalize justify-center`}
+                className={`h-full md:h-fit gap-2 flex flex-col items-center border-transparent hover:bg-slate-300 capitalize justify-center transition-colors`}
               >
                 <Archive size={40} strokeWidth={0.9} />
                 {section.name}

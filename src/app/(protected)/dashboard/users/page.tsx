@@ -16,7 +16,7 @@ export default async function UserListPage() {
 
   return (
     <PageUI
-      title={<PageTitle title="Listado de Usuarios" />}
+      title={<PageTitle title="Usuarios" />}
       subtitle="Todos los usuarios"
       breadcrumb={[{ label: "Usuarios" }]}
       options={

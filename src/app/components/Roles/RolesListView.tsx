@@ -6,7 +6,12 @@ import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { Alert } from "../Alert/Alert";
 import { CardContent } from "../CardContent/CardContent";
-import { DynamicTable } from "../Table/DynamicTable";
+import {
+  DynamicTable,
+  Priority,
+  PriorityEnum,
+  TableColumn,
+} from "../Table/DynamicTable";
 
 interface RolesListViewProps {
   roles: Role[];
@@ -39,19 +44,19 @@ export const RolesListView: FC<RolesListViewProps> = ({ roles, sections }) => {
     };
   });
 
-  const columns = [
+  const columns: TableColumn[] = [
     {
       key: "role",
       label: "Roles",
-      width: "w-[200px]",
+      priority: PriorityEnum.high,
       render: (value: string) => value,
     },
     ...sections.map((section) => ({
       key: section.name,
-      label: <div className="flex justify-center">{section.name}</div>,
-      width: "w-[130px]",
+      priority: PriorityEnum.low,
+      label: <span className="">{section.name}</span>,
       render: (hasPermission: boolean) => (
-        <div className="flex justify-center">
+        <span className="">
           <span
             className={`px-2 py-1 rounded text-xs font-medium ${
               hasPermission
@@ -61,7 +66,7 @@ export const RolesListView: FC<RolesListViewProps> = ({ roles, sections }) => {
           >
             {hasPermission ? "YES" : "NO"}
           </span>
-        </div>
+        </span>
       ),
     })),
   ];
@@ -84,7 +89,7 @@ export const RolesListView: FC<RolesListViewProps> = ({ roles, sections }) => {
   };
 
   return (
-    <CardContent>
+    <CardContent className={``}>
       <Alert
         message="¿Estás seguro de eliminar este rol?"
         onSuccess={() => {
@@ -104,6 +109,11 @@ export const RolesListView: FC<RolesListViewProps> = ({ roles, sections }) => {
           edit: true,
           delete: true,
         }}
+        // containerClassName="bg-white rounded-lg shadow"
+        // tableClassName="border-separate border-spacing-0"
+        // rowClassName="group"
+        // cellClassName="group-hover:bg-gray-50"
+        // headerClassName="bg-gray-50"
         onDelete={(id: string) => {
           router.replace("/dashboard/roles?action=alert&id=" + id);
         }}

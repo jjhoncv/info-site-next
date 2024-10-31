@@ -69,8 +69,8 @@ export const UserEditView: FC<UserEditViewProps> = ({ user, roles }) => {
   return (
     <CardContent>
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <div className="flex justify-between w-full gap-8">
-          <div className="w-1/2 flex flex-col">
+        <div className="md:grid-cols-2 grid w-full md:gap-6 ">
+          <div className="flex w-full flex-col">
             <div className="flex flex-col gap-1 mb-4">
               <Input
                 {...register("username")}
@@ -82,6 +82,17 @@ export const UserEditView: FC<UserEditViewProps> = ({ user, roles }) => {
             </div>
             <div className="flex flex-col gap-1 mb-4">
               <Input
+                {...register("lastname")}
+                error={errors.lastname}
+                label="Apellidos"
+                type="text"
+                onKeyDown={handleKeyDown}
+              />
+            </div>
+          </div>
+          <div className="flex w-full flex-col">
+            <div className="flex flex-col gap-1 mb-4">
+              <Input
                 {...register("email")}
                 label="Email"
                 type="email"
@@ -90,6 +101,19 @@ export const UserEditView: FC<UserEditViewProps> = ({ user, roles }) => {
               />
             </div>
 
+            <div className="flex flex-col gap-1 mb-4">
+              <Select error={errors.roles} label="Roles" {...register("roles")}>
+                <option value="">Seleccione rol</option>
+                {roles.map(({ id, name }) => (
+                  <option key={id} value={id}>
+                    {name}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          </div>
+
+          <div className="flex w-full flex-col">
             <div className="flex flex-col gap-1 mb-4">
               <Input
                 {...register("password")}
@@ -123,28 +147,6 @@ export const UserEditView: FC<UserEditViewProps> = ({ user, roles }) => {
                 )}
                 <label htmlFor="password-change">Cambiar password</label>
               </div>
-            </div>
-          </div>
-          <div className="w-1/2 flex flex-col">
-            <div className="flex flex-col gap-1 mb-4">
-              <Input
-                {...register("lastname")}
-                error={errors.lastname}
-                label="Apellidos"
-                type="text"
-                onKeyDown={handleKeyDown}
-              />
-            </div>
-
-            <div className="flex flex-col gap-1 mb-4">
-              <Select error={errors.roles} label="Roles" {...register("roles")}>
-                <option value="">Seleccione rol</option>
-                {roles.map(({ id, name }) => (
-                  <option key={id} value={id}>
-                    {name}
-                  </option>
-                ))}
-              </Select>
             </div>
           </div>
         </div>

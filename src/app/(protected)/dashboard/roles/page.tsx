@@ -17,7 +17,7 @@ export default async function RolesPage() {
 
   return (
     <PageUI
-      title={<PageTitle title="Listado de roles" />}
+      title={<PageTitle title="Roles" />}
       subtitle="Todos los roles"
       breadcrumb={[{ label: "Roles" }]}
       options={<PageButton href="/dashboard/roles/new">Nuevo rol</PageButton>}

@@ -1,17 +1,20 @@
 "use client";
 
-import { PermissionName, User } from "@/interfaces";
+import { PermissionName, Section, User } from "@/interfaces";
 import {
   ChevronDown,
+  ChevronUp,
   HomeIcon,
   LayoutGrid,
   TableOfContents,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 interface AdminSidebarProps {
   user: User;
+  open: boolean | string | undefined;
 }
 
 interface MenuItem {
@@ -21,39 +24,39 @@ interface MenuItem {
   icon?: string; // Opcional: para iconos si decides añadirlos
 }
 
-const AdminSidebar: React.FC<AdminSidebarProps> = ({ user }) => {
+export const MenuItems = (items: Section[]) => {
   const pathname = usePathname();
-  const menuItems = user.role?.sections.flat();
+  const [open, setOpen] = useState(false);
 
   return (
-    <aside className="bg-gray-800 text-white w-16 flex flex-col md:w-64 min-h-screen p-4">
-      <div className="mb-6 hidden md:block">
-        <h2 className="text-2xl font-semibold">Admin Panel</h2>
-      </div>
-      <nav className="gap-1 flex flex-col items-center md:items-stretch">
-        <Link
-          className="flex gap-3 p-3  rounded items-center hover:bg-gray-700"
-          href="/dashboard"
-        >
-          <HomeIcon style={{ strokeWidth: 0.9 }} color="white" size={20} />
-          <span className="hidden md:block">Dashboard</span>
-        </Link>
-        {menuItems.length > 0 && (
-          <>
-            <div className="flex relative gap-3 p-3 rounded items-center hover:bg-gray-700">
-              <LayoutGrid
-                style={{ strokeWidth: 0.9 }}
-                color="white"
-                size={22}
+    <>
+      {items.length > 0 && (
+        <>
+          <div
+            onClick={() => {
+              setOpen(!open);
+            }}
+            className={`${
+              open ? "bg-gray-700" : ""
+            } flex cursor-pointer relative gap-3 p-3 rounded items-center hover:bg-gray-600 transition-colors`}
+          >
+            <LayoutGrid style={{ strokeWidth: 0.9 }} color="white" size={22} />
+            <span className="hidden md:block">Secciones</span>
+            {open ? (
+              <ChevronUp
+                size={15}
+                className="absolute right-4 hidden md:block"
               />
-              <span className="hidden md:block">Secciones</span>
+            ) : (
               <ChevronDown
                 size={15}
                 className="absolute right-4 hidden md:block"
               />
-            </div>
+            )}
+          </div>
+          {open && (
             <ul className="ml-11 hidden md:block">
-              {menuItems.map((item) => (
+              {items.map((item) => (
                 <li key={item.id} className="mb-1">
                   <Link
                     href={item.url}
@@ -68,10 +71,38 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ user }) => {
                 </li>
               ))}
             </ul>
-          </>
-        )}
-      </nav>
-    </aside>
+          )}
+        </>
+      )}
+    </>
+  );
+};
+
+const AdminSidebar: React.FC<AdminSidebarProps> = ({ user, open }) => {
+  const menuItems = user.role?.sections.flat();
+
+  return (
+    <>
+      <aside
+        className={`bg-gray-800 text-white hidden flex-col md:flex md:w-64 min-h-screen p-4 ${
+          open ? `w-16 !flex` : `hidden`
+        }`}
+      >
+        <div className="mb-6 hidden md:block">
+          <h2 className="text-2xl font-semibold">Admin Panel</h2>
+        </div>
+        <nav className="gap-1 flex flex-col items-center md:items-stretch">
+          <Link
+            className="flex transition-colors gap-3 p-3 rounded items-center hover:bg-gray-700"
+            href="/dashboard"
+          >
+            <HomeIcon style={{ strokeWidth: 0.9 }} color="white" size={20} />
+            <span className="hidden md:block">Dashboard</span>
+          </Link>
+          {MenuItems(menuItems)}
+        </nav>
+      </aside>
+    </>
   );
 };
 

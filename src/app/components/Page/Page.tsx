@@ -1,4 +1,3 @@
-import { Divide } from "lucide-react";
 import Link from "next/link";
 import React, { FC } from "react";
 
@@ -18,7 +17,7 @@ export const PageUI: FC<PageUIProps> = ({
   children,
 }) => {
   return (
-    <div className="container ">
+    <div className="">
       <div className="flex justify-between">
         <div>
           {title && <h1 className="font-semibold text-2xl">{title}</h1>}
@@ -53,7 +52,7 @@ export const PageUI: FC<PageUIProps> = ({
 
         {options && <div>{options}</div>}
       </div>
-      {children}
+      <div className=" mt-5 md:mt-0">{children}</div>
     </div>
   );
 };

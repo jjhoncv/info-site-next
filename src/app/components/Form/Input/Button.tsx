@@ -15,10 +15,12 @@ export const Button: FC<ButtonProps> = ({
   href,
   outline,
   onClick,
+  ...props
 }) => {
-  const className = "rounded-lg px-6 py-2 flex";
-  const classOutline = "border hover:border-slate-300 hover:bg-slate-100";
-  const classBg = "bg-gray-800 text-white hover:bg-sky-600";
+  const className = "min-w-16 rounded-lg px-8 py-2.5 flex";
+  const classOutline =
+    "border hover:border-slate-300 hover:bg-slate-100 transition-colors";
+  const classBg = "bg-gray-800 text-white hover:bg-sky-600 transition-colors";
 
   return (
     <>
@@ -27,6 +29,7 @@ export const Button: FC<ButtonProps> = ({
           className={`${outline ? classOutline : classBg} ${className}`}
           type={type}
           onClick={onClick}
+          {...props}
         >
           {children}
         </button>

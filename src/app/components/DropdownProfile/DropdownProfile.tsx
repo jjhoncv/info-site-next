@@ -48,10 +48,6 @@ export const DropdownProfile: FC<DropdownProfileProps> = ({ user }) => {
     ],
   ];
 
-  const getInitials = (username: string, lastname: string) => {
-    return `${username[0]}${lastname[0]}`.toUpperCase();
-  };
-
   const hasRequiredRole = (requiredRoles?: RoleName[]) => {
     if (!requiredRoles) return true;
     return requiredRoles.includes(user.role.name);
@@ -92,7 +88,7 @@ export const DropdownProfile: FC<DropdownProfileProps> = ({ user }) => {
     if (item.href) {
       return (
         <Link
-          className="hover:bg-gray-200 py-2 px-3 w-full block rounded-lg transition-colors"
+          className="hover:bg-slate-100 border border-transparent hover:border-gray-300 py-2 px-3 w-full block rounded-lg transition-colors"
           href={item.href}
           onClick={() => setOpen(false)}
         >
@@ -103,7 +99,7 @@ export const DropdownProfile: FC<DropdownProfileProps> = ({ user }) => {
 
     return (
       <button
-        className="hover:bg-gray-200 py-2 px-3 w-full rounded-lg flex items-center transition-colors text-left"
+        className="hover:bg-slate-100 border border-transparent hover:border-gray-300 py-2 px-3 w-full rounded-lg flex items-center transition-colors text-left"
         onClick={() => {
           item.onClick?.();
           setOpen(false);
@@ -118,7 +114,11 @@ export const DropdownProfile: FC<DropdownProfileProps> = ({ user }) => {
     <div className="relative" ref={dropdownRef}>
       <div
         onClick={() => setOpen(!open)}
-        className="flex cursor-pointer gap-2 px-4 py-2 bg-white  rounded-lg items-center border hover:border-slate-300 hover:bg-slate-100 transition-colors"
+        className={`flex cursor-pointer gap-2 px-4 py-2.5 ${
+          open
+            ? "bg-slate-700"
+            : "bg-white hover:border-slate-300 hover:bg-slate-100"
+        } rounded-lg items-center border  transition-colors`}
         role="button"
         aria-haspopup="true"
         aria-expanded={open}
@@ -134,19 +134,27 @@ export const DropdownProfile: FC<DropdownProfileProps> = ({ user }) => {
           className="uppercase rounded-full text-white w-[30px] h-[30px] flex justify-center items-center"
           aria-label={`${user.username} ${user.lastname} avatar`}
         >
-          <UserCircle2Icon size={30} strokeWidth={1} color="#374151" />
+          <UserCircle2Icon
+            size={30}
+            strokeWidth={1}
+            color={`${open ? "white" : "#374151"}`}
+          />
         </div>
-        <div className="mr-4 font-medium hidden md:block">{`${user.username} ${user.lastname}`}</div>
+        <div
+          className={`mr-4 font-medium hidden md:block ${
+            open ? "text-white" : "text-gray-950"
+          }`}
+        >{`${user.username} ${user.lastname}`}</div>
         {open ? (
-          <ChevronUp size={20} className="text-gray-500" />
+          <ChevronUp size={20} color={`${open ? "white" : "#374151"}`} />
         ) : (
-          <ChevronDown size={20} className="text-gray-500" />
+          <ChevronDown size={20} color={`${open ? "white" : "#374151"}`} />
         )}
       </div>
 
       {open && (
         <div
-          className="p-4 gap-2 flex shadow-lg flex-col absolute top-[calc(100%+4px)] right-0 w-[250px] bg-white border rounded-lg z-50"
+          className="p-4 gap-1 flex shadow-lg flex-col absolute top-[calc(100%+4px)] right-0 w-[250px] bg-white border rounded-lg z-50 transition-all"
           role="menu"
         >
           {menuItems.map((group, groupIndex) => {
@@ -160,7 +168,7 @@ export const DropdownProfile: FC<DropdownProfileProps> = ({ user }) => {
 
             return (
               <React.Fragment key={groupIndex}>
-                <ul className="w-full">
+                <ul className="w-full gap-1 flex flex-col">
                   {visibleItems.map((item, itemIndex) => (
                     <li key={itemIndex} role="menuitem">
                       {renderMenuItem(item)}

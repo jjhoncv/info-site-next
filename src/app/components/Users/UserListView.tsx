@@ -1,7 +1,7 @@
 "use client";
 import { User } from "@/interfaces";
 import { FC } from "react";
-import { DynamicTable, TableColumn } from "../Table/DynamicTable";
+import { DynamicTable, PriorityEnum, TableColumn } from "../Table/DynamicTable";
 import { useRouter } from "next/navigation";
 import { FetchCustomBody } from "@/lib/FetchCustomBody";
 import { ToastFail, ToastSuccess } from "@/lib/splash";
@@ -19,22 +19,21 @@ export const UserListView: FC<UserListViewProps> = ({ users }) => {
     {
       key: "username",
       label: "Nombres",
-      width: "w-1/5",
     },
     {
       key: "lastname",
       label: "Apellidos",
-      width: "w-1/5",
     },
     {
       key: "email",
       label: "Email",
-      width: "w-1/5",
+      priority: PriorityEnum.low,
     },
     {
       key: "role",
       label: "Rol",
-      width: "w-1/5",
+      priority: PriorityEnum.low,
+
       render: (value) => value.name, // Para acceder a role.name
     },
   ];
