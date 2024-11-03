@@ -3,8 +3,9 @@
 import { RoleName, User } from "@/interfaces";
 import { ChevronDown, ChevronUp, UserCircle2Icon } from "lucide-react";
 import { signOut } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
-import React, { FC, useState, useEffect, useRef } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 
 interface DropdownProfileProps {
   user: User;
@@ -130,16 +131,29 @@ export const DropdownProfile: FC<DropdownProfileProps> = ({ user }) => {
           }
         }}
       >
-        <div
-          className="uppercase rounded-full text-white w-[30px] h-[30px] flex justify-center items-center"
-          aria-label={`${user.username} ${user.lastname} avatar`}
-        >
-          <UserCircle2Icon
-            size={30}
-            strokeWidth={1}
-            color={`${open ? "white" : "#374151"}`}
-          />
-        </div>
+        {user.photo ? (
+          <div className="w-[30px] h-[30px] relative rounded-full overflow-hidden">
+            <Image
+              sizes="30px"
+              src={user.photo}
+              fill={true}
+              className="object-cover"
+              alt="profile image"
+            />
+          </div>
+        ) : (
+          <div
+            className="uppercase rounded-full text-white w-[30px] h-[30px] flex justify-center items-center"
+            aria-label={`${user.username} ${user.lastname} avatar`}
+          >
+            <UserCircle2Icon
+              size={30}
+              strokeWidth={1}
+              color={`${open ? "white" : "#374151"}`}
+            />
+          </div>
+        )}
+
         <div
           className={`mr-4 font-medium hidden md:block ${
             open ? "text-white" : "text-gray-950"

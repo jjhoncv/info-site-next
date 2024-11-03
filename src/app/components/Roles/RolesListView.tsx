@@ -2,16 +2,12 @@
 import { Role, Section } from "@/interfaces";
 import { FetchCustomBody } from "@/lib/FetchCustomBody";
 import { ToastFail, ToastSuccess } from "@/lib/splash";
+import { Check, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { Alert } from "../Alert/Alert";
 import { CardContent } from "../CardContent/CardContent";
-import {
-  DynamicTable,
-  Priority,
-  PriorityEnum,
-  TableColumn,
-} from "../Table/DynamicTable";
+import { DynamicTable, TableColumn } from "../Table/DynamicTable";
 
 interface RolesListViewProps {
   roles: Role[];
@@ -48,23 +44,25 @@ export const RolesListView: FC<RolesListViewProps> = ({ roles, sections }) => {
     {
       key: "role",
       label: "Roles",
-      priority: PriorityEnum.high,
       render: (value: string) => value,
     },
     ...sections.map((section) => ({
       key: section.name,
-      priority: PriorityEnum.low,
       label: <span className="">{section.name}</span>,
       render: (hasPermission: boolean) => (
         <span className="">
           <span
-            className={`px-2 py-1 rounded text-xs font-medium ${
+            className={`px-2 flex w-10 justify-center py-1 rounded text-xs font-medium ${
               hasPermission
                 ? "bg-emerald-100 text-emerald-700"
                 : "bg-red-100 text-red-700"
             }`}
           >
-            {hasPermission ? "YES" : "NO"}
+            {hasPermission ? (
+              <Check className="flex" color="green" size={20} />
+            ) : (
+              <X className="flex" color="red" size={20} />
+            )}
           </span>
         </span>
       ),
@@ -109,13 +107,18 @@ export const RolesListView: FC<RolesListViewProps> = ({ roles, sections }) => {
           edit: true,
           delete: true,
         }}
-        // containerClassName="bg-white rounded-lg shadow"
-        // tableClassName="border-separate border-spacing-0"
-        // rowClassName="group"
-        // cellClassName="group-hover:bg-gray-50"
-        // headerClassName="bg-gray-50"
+        rowMobileClassName="grid grid-cols-3 pt-1"
         onDelete={(id: string) => {
           router.replace("/dashboard/roles?action=alert&id=" + id);
+        }}
+        enableSearch={false}
+        enablePagination={false}
+        enableSort={false}
+        enableReorder={false}
+        pageSize={5}
+        pageSizeOptions={[5, 10, 20, 50]}
+        onEdit={(id) => {
+          router.replace("/dashboard/roles/" + id);
         }}
       />
     </CardContent>

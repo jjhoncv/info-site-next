@@ -1,50 +1,39 @@
-import { PERMISSIONS } from "@/interfaces";
+import { BannerListView } from "@/app/components/Banners/BannerListView";
+import { PageUI } from "@/app/components/Page/Page";
+import { PageButton } from "@/app/components/Page/PageButton";
+import { PageTitle } from "@/app/components/Page/PageTitle";
+import { RoleName } from "@/interfaces";
 import { hasPermission } from "@/lib/hasPermission";
+import { toClient } from "@/lib/utils";
 import { getBanners } from "@/models/banner";
-import Image from "next/image";
+import { Suspense } from "react";
 
-export default async function BannersPage() {
-  const permission = await hasPermission([PERMISSIONS.BANNERS_VIEW]);
+function LoadingTable() {
+  return <div>Cargando banners...</div>;
+}
+
+export default async function BannerListPage() {
+  const permission = await hasPermission(RoleName.SUPERADMIN);
+
+  const [banners] = await Promise.all([getBanners().then(toClient)]);
+  if (!banners) return <div>No se encontraron banners</div>;
 
   if (!permission) {
     return <div>Unauthorized</div>;
   }
 
-  const banners = await getBanners();
-
   return (
-    <div className="container">
-      <h1>Banners</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Image</th>
-            <th>Link</th>
-            <th>Active</th>
-          </tr>
-        </thead>
-        <tbody>
-          {banners.map((banner) => {
-            if (!banner) return null;
-            return (
-              <tr key={banner.id}>
-                <td>{banner.id}</td>
-                <td>
-                  <Image
-                    src={banner.image_url}
-                    width={400}
-                    height={50}
-                    alt={""}
-                  />
-                </td>
-                <td>{banner.link}</td>
-                <td>{banner.description}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+    <PageUI
+      title={<PageTitle title="Banners" />}
+      subtitle="Todos los banners"
+      breadcrumb={[{ label: "Banners" }]}
+      options={
+        <PageButton href="/dashboard/banners/new">Nuevo banner</PageButton>
+      }
+    >
+      <Suspense fallback={<LoadingTable />}>
+        <BannerListView banners={banners} />
+      </Suspense>
+    </PageUI>
   );
 }

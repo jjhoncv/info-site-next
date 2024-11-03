@@ -115,6 +115,7 @@ export interface User {
   updated_at?: Date;
   emailVerified?: Date;
   role: Role; // Relación con Role, opcional porque no siempre se cargará
+  photo?: string;
 }
 
 export interface Role {

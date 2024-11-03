@@ -36,7 +36,7 @@ export const Alert: FC<AlertProps> = ({
               open ? `block` : `hidden`
             } fixed top-0 left-0 md:left-[256px] right-0 bottom-0 w-full h-full z-40 bg-[#00000036] mx-auto `}
           />
-          <div className="flex rounded-lg shadow-lg flex-col left-0 md:left-[256px] right-0 mx-auto z-50 absolute  bg-white w-[450px] min-h-[200px]">
+          <div className="flex rounded-lg shadow-lg flex-col left-0 md:left-[256px] right-0 mx-auto z-50 absolute  bg-white w-[calc(100%-40px)] md:w-[450px] md:min-h-[200px]">
             <div className="p-2">
               <div className="font-semibold px-3 py-3 relative">
                 {title ?? "Notificación"}

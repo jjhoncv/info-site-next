@@ -2,9 +2,10 @@ interface FetchCustomBody {
   url: string;
   method: "PUT" | "PATCH" | "POST" | "DELETE";
   data: any;
+  withFiles?: boolean;
 }
 
-interface ApiResponse {
+export interface ApiResponse {
   success: boolean;
   message: string;
   user?: any;
@@ -14,15 +15,27 @@ export const FetchCustomBody = async ({
   url,
   method,
   data,
+  withFiles,
 }: FetchCustomBody) => {
-  try {
-    const response = await fetch(url, {
-      method,
+  // peticion con archivos
+  let optionsFetch: RequestInit = {
+    method,
+    body: data,
+  };
+
+  // peticion simple
+  if (!withFiles) {
+    optionsFetch = {
+      ...optionsFetch,
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-    });
+    };
+  }
+
+  try {
+    const response = await fetch(url, optionsFetch);
 
     const json: ApiResponse = await response.json();
 

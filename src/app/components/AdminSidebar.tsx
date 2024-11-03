@@ -1,13 +1,7 @@
 "use client";
 
 import { PermissionName, Section, User } from "@/interfaces";
-import {
-  ChevronDown,
-  ChevronUp,
-  HomeIcon,
-  LayoutGrid,
-  TableOfContents,
-} from "lucide-react";
+import { ChevronDown, ChevronUp, HomeIcon, LayoutGrid } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";

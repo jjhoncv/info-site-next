@@ -13,7 +13,7 @@ export async function getBanners(): Promise<Banner[]> {
   }
 }
 
-export async function getBannerById(id: number): Promise<Banner | null> {
+export async function getBannerById(id: string): Promise<Banner | null> {
   try {
     const result = await executeQuery<Banner[]>({
       query: "SELECT * FROM banner WHERE id = ?",
@@ -27,7 +27,7 @@ export async function getBannerById(id: number): Promise<Banner | null> {
 }
 
 export async function createBanner(
-  banner: Omit<Banner, "id" | "created_at" | "updated_at">
+  banner: Omit<Banner, "id" | "created_at" | "updated_at" | "image_url">
 ): Promise<Banner> {
   const result = await executeQuery<{ insertId: number }>({
     query: "INSERT INTO banner SET ?",
@@ -37,7 +37,7 @@ export async function createBanner(
 }
 
 export async function updateBanner(
-  id: number,
+  id: string,
   banner: Partial<Banner>
 ): Promise<boolean> {
   const result = await executeQuery<{ affectedRows: number }>({

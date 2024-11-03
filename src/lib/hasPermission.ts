@@ -1,13 +1,7 @@
 import { auth } from "@/auth";
-import { PERMISSIONS } from "@/interfaces";
+import { RoleName } from "@/interfaces";
 
-export const hasPermission = async (permissionPage: PERMISSIONS[]) => {
+export const hasPermission = async (rolName: RoleName) => {
   const session = await auth();
-
-  // check if user has permission
-  const hasPermission = permissionPage.every((permission) =>
-    session?.user?.data?.role?.permissions?.includes(permission)
-  );
-
-  return hasPermission;
+  return session?.user?.data?.role?.name === rolName;
 };

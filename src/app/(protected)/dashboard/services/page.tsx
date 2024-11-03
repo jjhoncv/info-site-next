@@ -4,12 +4,6 @@ import { hasPermission } from "@/lib/hasPermission";
 import { findAllServices } from "@/models/service";
 
 export default async function BannersPage() {
-  const permission = await hasPermission([PERMISSIONS.SERVICES_VIEW]);
-
-  if (!permission) {
-    return <div>Unauthorized</div>;
-  }
-
   const services = await findAllServices();
 
   return (

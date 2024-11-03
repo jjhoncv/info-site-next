@@ -50,10 +50,7 @@ export async function createUser(
   return (await getUser(result.insertId)) as User;
 }
 
-export async function updateUser(
-  user: Omit<User, "id" | "created_at" | "updated_at" | "role">,
-  id: string
-): Promise<User> {
+export async function updateUser(user: any, id: string): Promise<User> {
   const result = await executeQuery<{ insertId: string }>({
     query: "UPDATE users SET ? WHERE id=?",
     values: [user, id],

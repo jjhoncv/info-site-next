@@ -30,13 +30,17 @@ export default function BannerList({ banners }: { banners: Banner[] }) {
             index === currentSlide ? "opacity-100" : "opacity-0"
           }`}
         >
-          <Image
-            src={slide.image_url}
-            alt={slide.title}
-            layout="fill"
-            objectFit="cover"
-            priority
-          />
+          {slide.image_url ? (
+            <Image
+              src={slide.image_url}
+              alt={slide.title}
+              layout="fill"
+              objectFit="cover"
+              priority
+            />
+          ) : (
+            <div className="w-full h-full bg-slate-100" />
+          )}
           <div className="absolute inset-0 bg-gradient-to-r from-gray-900 to-transparent opacity-70" />
           <div className="absolute inset-0 flex items-center">
             <div className="container mx-auto px-4">

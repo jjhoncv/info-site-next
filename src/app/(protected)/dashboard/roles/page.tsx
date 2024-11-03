@@ -2,6 +2,8 @@ import { PageUI } from "@/app/components/Page/Page";
 import { PageButton } from "@/app/components/Page/PageButton";
 import { PageTitle } from "@/app/components/Page/PageTitle";
 import { RolesListView } from "@/app/components/Roles/RolesListView";
+import { RoleName } from "@/interfaces";
+import { hasPermission } from "@/lib/hasPermission";
 import { toClient } from "@/lib/utils";
 import { getRoles } from "@/models/role";
 import { getSections } from "@/models/sections";
@@ -12,8 +14,12 @@ function LoadingTable() {
 }
 
 export default async function RolesPage() {
+  const permission = await hasPermission(RoleName.SUPERADMIN);
   const roles = toClient(await getRoles());
   const sections = toClient(await getSections());
+  if (!permission) {
+    return <div>Unauthorized</div>;
+  }
 
   return (
     <PageUI

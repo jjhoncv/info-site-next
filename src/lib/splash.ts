@@ -3,7 +3,7 @@ import toast, { ToastOptions } from "react-hot-toast";
 export const ToastSuccess = (message: string) => {
   const options: ToastOptions = {
     duration: 3000,
-    position: "top-center",
+    position: "top-right",
     style: {
       background: "#10B981",
       color: "#fff",
@@ -20,6 +20,7 @@ export const ToastFail = (message: string) => {
     style: {
       background: "#EF4444",
       color: "#fff",
+      borderColor: "#EF4444",
     },
   };
 

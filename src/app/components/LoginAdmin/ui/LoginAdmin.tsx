@@ -1,21 +1,22 @@
 "use client";
 
 import { loginAction } from "@/actions/auth-action";
+import { handleKeyDown } from "@/lib/form";
+import { ToastFail } from "@/lib/splash";
 import { loginSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Button } from "../../Form/Input/Button";
+import { Input } from "../../Form/Input/Input";
 
 // Infiere el tipo del esquema
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export const LoginAdmin = () => {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
@@ -26,111 +27,79 @@ export const LoginAdmin = () => {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    setError(null);
-    startTransition(async () => {
-      const response = await loginAction(data);
-      if (response?.error) {
-        setError(response.error);
-      } else {
-        router.push("/dashboard");
-      }
-    });
+    const response = await loginAction(data);
+    if (response?.error) {
+      ToastFail(response?.error);
+    } else {
+      router.push("/dashboard");
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Log in
-        </h2>
+    <div className="w-full h-full flex md:flex-row flex-col">
+      <div className="md:bg-slate-100 bg-transparent md:min-h-screen md:w-6/12 lg:w-7/12">
+        <div className="w-full flex justify-center items-center h-full">
+          <div className="w-full md:m-5 gap-3 flex flex-col ">
+            <div className="w-full flex min-h-full items-center">
+              <div className="relative w-full h-[80px] md:h-[400px] md:flex">
+                <Image
+                  src="/imgs/dashboard/bg-login-2.jpg"
+                  fill
+                  objectFit="cover"
+                  alt="image login"
+                  className="rounded"
+                />
+              </div>
+            </div>
+            <div className="p-8 md:p-0">
+              <h2 className="text-2xl font-normal">Panel de administración</h2>
+              <p className="font-light">
+                Aquí podrás crear y modificar las diferentes secciones del sitio
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
+      <div className="md:w-6/12 lg:w-5/12">
+        <div className="min-h-screen bg-white h-full flex flex-col pt-[120px] md:pt-0 md:justify-center py-12 sm:px-6 lg:px-8">
+          <div className="sm:mx-auto px-8 sm:w-full sm:max-w-md">
+            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+              Iniciar la sesión
+            </h2>
+          </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            {error && <div className="text-red-600">{error}</div>}
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Email
-              </label>
-              <div className="mt-1">
-                <input
-                  id="email"
+          <div className="mt-8 px-8 sm:mx-auto sm:w-full sm:max-w-md">
+            <div className="">
+              <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+                <Input
                   {...register("email")}
+                  label="Correo electrónico"
                   type="email"
-                  autoComplete="email"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  error={errors.email}
+                  onKeyDown={handleKeyDown}
                 />
-                {errors.email && (
-                  <p className="mt-2 text-sm text-red-600">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-            </div>
 
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="password"
+                <Input
                   {...register("password")}
+                  error={errors.password}
+                  label="Contraseña"
                   type="password"
-                  disabled={isPending}
-                  autoComplete="current-password"
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  onKeyDown={handleKeyDown}
                 />
-                {errors.password && (
-                  <p className="mt-2 text-sm text-red-600">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
-            </div>
 
-            <div className="text-sm">
-              <a
-                href="#"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
-              >
-                Forgot your password?
-              </a>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#fc7642] hover:bg-[#fc8a5d] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                SIGN IN
-              </button>
-            </div>
-          </form>
-
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
-                  No account yet?{" "}
-                  <Link
-                    href="/admin/register"
+                <div className="text-sm">
+                  <a
+                    href="#"
                     className="font-medium text-indigo-600 hover:text-indigo-500"
                   >
-                    Create an account
-                  </Link>
-                </span>
-              </div>
+                    ¿Olvidaste tu contraseña?
+                  </a>
+                </div>
+
+                <div className="flex gap-3 justify-end mt-8">
+                  <Button type="submit">Iniciar sesión</Button>
+                </div>
+              </form>
             </div>
           </div>
         </div>

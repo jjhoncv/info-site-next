@@ -1,8 +1,8 @@
-import { z, object, string, boolean } from "zod";
+import { z, object, string, boolean, any } from "zod";
 
 export const loginSchema = object({
-  email: string().email("Invalid email address"),
-  password: string().min(6, "Password must be at least 6 characters"),
+  email: string().email("Dirección de correo electrónico no válida"),
+  password: string().min(6, "La contraseña debe tener al menos 6 caracteres"),
 });
 
 export const signupSchema = object({

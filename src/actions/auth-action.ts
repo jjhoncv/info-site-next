@@ -14,12 +14,12 @@ export const loginAction = async (values: z.infer<typeof loginSchema>) => {
       password: values.password,
       redirect: false,
     });
-    return { success: true };
+    return { success: true, message: "login successfull" };
   } catch (error) {
     if (error instanceof AuthError) {
-      return { error: error.cause?.err?.message };
+      return { success: false, error: error.cause?.err?.message ?? "" };
     }
-    return { error: "error 500" };
+    return { success: false, error: "error 500" };
   }
 };
 
