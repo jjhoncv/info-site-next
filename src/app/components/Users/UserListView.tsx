@@ -70,7 +70,7 @@ export const UserListView: FC<UserListViewProps> = ({ users }) => {
   };
 
   return (
-    <CardContent>
+    <>
       <Alert
         message="¿Estás seguro de eliminar este usuario?"
         onSuccess={() => {
@@ -104,6 +104,6 @@ export const UserListView: FC<UserListViewProps> = ({ users }) => {
           router.replace("/dashboard/users/" + id);
         }}
       />
-    </CardContent>
+    </>
   );
 };

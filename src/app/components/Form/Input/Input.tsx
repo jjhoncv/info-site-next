@@ -1,7 +1,9 @@
-import { Trash2Icon, UploadCloudIcon } from "lucide-react";
+import { Search, Trash2Icon, UploadCloudIcon } from "lucide-react";
 import ImageNext from "next/image";
 import React, { forwardRef, useState } from "react";
 import { FieldError, UseFormSetError } from "react-hook-form";
+import { FileOptions } from "../../FormCreate/FormCreate";
+import { formatBytes } from "@/lib/formatBytes";
 
 // Tipos base para props comunes
 type BaseProps = {
@@ -12,6 +14,7 @@ type BaseProps = {
   maxSizeFile?: number;
   sizePixels?: { width: number; height: number };
   placeholder?: string;
+  multiple?: boolean;
   setError?: UseFormSetError<{
     title: string;
     subtitle: string;
@@ -19,6 +22,7 @@ type BaseProps = {
     link: string;
     image_url: File;
   }>;
+  options?: FileOptions;
 };
 
 // Tipos específicos para cada variante
@@ -59,6 +63,8 @@ export const Input = forwardRef<
       maxSizeFile,
       sizePixels,
       setError,
+      options,
+      multiple,
       ...props
     },
     ref
@@ -114,20 +120,62 @@ export const Input = forwardRef<
     }
 
     if (type === "search") {
-      const { onChange, ...checkboxProps } =
+      const { onChange, ...inputProps } =
         props as React.InputHTMLAttributes<HTMLInputElement>;
       return (
         <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
+          {label && <label className="text-sm">{label}</label>}
+          <div className="relative flex items-center">
             <input
-              type="text"
+              type={type}
               ref={ref as React.Ref<HTMLInputElement>}
-              className={inputClassName}
+              className={`${inputClassName} min-h-[42px] pr-5`}
               onChange={onChange}
-              {...checkboxProps}
+              {...inputProps}
             />
-            <label className="text-sm">{label}</label>
+            <Search size={18} className="absolute right-3 stroke-slate-300" />
           </div>
+
+          {error && (
+            <p className="text-sm text-red-600 mt-1">{error.message}</p>
+          )}
+        </div>
+      );
+    }
+
+    if (type === "file") {
+      const { onChange, ...inputProps } =
+        props as React.InputHTMLAttributes<HTMLInputElement>;
+
+      return (
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-bold pl-1">{label}</label>
+          <div className="text-sm text-gray-500 font-light">
+            <ul className="list-disc list-inside">
+              <li>Formatos válidos: {options?.acceptImageTypes.join(",")}</li>
+              {options?.maxFileSize && (
+                <li>
+                  Maximo tamaño soportado: {formatBytes(options?.maxFileSize)}
+                </li>
+              )}
+              {options?.dimensions && (
+                <li>
+                  Dimensiones válidas: {options?.dimensions.min.width}x
+                  {options?.dimensions.min.height} píxeles a{" "}
+                  {options?.dimensions.max.width}x
+                  {options?.dimensions.max.height} píxeles
+                </li>
+              )}
+              {multiple && <li>Puede seleccionar múltiples archivos</li>}
+            </ul>
+          </div>
+          <input
+            type={type}
+            ref={ref as React.Ref<HTMLInputElement>}
+            className={inputClassName}
+            onChange={onChange}
+            {...inputProps}
+          />
           {error && (
             <p className="text-sm text-red-600 mt-1">{error.message}</p>
           )}

@@ -13,7 +13,7 @@ export const PageButton: FC<PageButtonProps> = ({ children, href }) => {
     <Button type="link" href={href}>
       <div className="flex gap-2 items-center">
         <PlusIcon size={20} />
-        {children}
+        {children ? children : "Crear nuevo"}
       </div>
     </Button>
   );

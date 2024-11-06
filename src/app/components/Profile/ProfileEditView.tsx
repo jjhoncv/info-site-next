@@ -33,7 +33,7 @@ export const ProfileEditView: FC<ProfileEditViewProps> = ({ user }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     setValue,
     trigger,
     reset,
@@ -267,7 +267,9 @@ export const ProfileEditView: FC<ProfileEditViewProps> = ({ user }) => {
             <Button type="cancel" href="/dashboard/users">
               Cancelar
             </Button>
-            <Button type="submit">Actualizar</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              Actualizar
+            </Button>
           </div>
         </form>
       </CardContent>

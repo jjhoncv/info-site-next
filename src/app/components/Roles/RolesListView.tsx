@@ -87,7 +87,7 @@ export const RolesListView: FC<RolesListViewProps> = ({ roles, sections }) => {
   };
 
   return (
-    <CardContent className={``}>
+    <>
       <Alert
         message="¿Estás seguro de eliminar este rol?"
         onSuccess={() => {
@@ -121,6 +121,6 @@ export const RolesListView: FC<RolesListViewProps> = ({ roles, sections }) => {
           router.replace("/dashboard/roles/" + id);
         }}
       />
-    </CardContent>
+    </>
   );
 };

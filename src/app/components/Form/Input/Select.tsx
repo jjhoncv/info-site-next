@@ -1,3 +1,4 @@
+import { ChevronDown } from "lucide-react";
 import React, { forwardRef, SelectHTMLAttributes } from "react";
 import { FieldError } from "react-hook-form";
 
@@ -20,9 +21,17 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             {label}
           </label>
         )}
-        <select className={selectClassName} ref={ref} {...props}>
-          {children}
-        </select>
+        <div className="relative">
+          <select
+            className={selectClassName}
+            ref={ref}
+            {...props}
+            style={{ WebkitAppearance: "none", paddingRight: "20px" }}
+          >
+            {children}
+          </select>
+          <ChevronDown size={15} className="absolute right-2 top-3" />
+        </div>
         {error && <p className="mt-1 text-sm text-red-600">{error.message}</p>}
       </div>
     );

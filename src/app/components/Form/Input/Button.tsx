@@ -7,6 +7,7 @@ interface ButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
   outline?: boolean;
+  disabled?: boolean;
 }
 
 export const Button: FC<ButtonProps> = ({
@@ -15,9 +16,12 @@ export const Button: FC<ButtonProps> = ({
   href,
   outline,
   onClick,
+  disabled,
   ...props
 }) => {
-  const className = "min-w-16 rounded-lg px-8 py-2.5 flex";
+  const className = `min-w-16 rounded px-8 py-2.5 flex ${
+    disabled ? `!bg-gray-300 !hover:bg-gray-200 !cursor-not-allowed` : ``
+  }`;
   const classOutline =
     "border hover:border-slate-300 hover:bg-slate-100 transition-colors";
   const classBg = "bg-gray-800 text-white hover:bg-sky-600 transition-colors";
@@ -26,7 +30,7 @@ export const Button: FC<ButtonProps> = ({
     <>
       {(type === "button" || type === "submit") && (
         <button
-          className={`${outline ? classOutline : classBg} ${className}`}
+          className={`${outline ? classOutline : classBg} ${className} cursor`}
           type={type}
           onClick={onClick}
           {...props}

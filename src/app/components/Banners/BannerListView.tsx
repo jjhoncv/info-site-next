@@ -2,13 +2,11 @@
 import { Banner } from "@/interfaces";
 import { FetchCustomBody } from "@/lib/FetchCustomBody";
 import { ToastFail, ToastSuccess } from "@/lib/splash";
-import { ImageOffIcon } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { Alert } from "../Alert/Alert";
-import { CardContent } from "../CardContent/CardContent";
+import { PreviewImageList } from "../PreviewImageList";
 import { DynamicTable, TableColumn } from "../Table/DynamicTable";
 
 interface BannerListViewProps {
@@ -25,48 +23,30 @@ export const BannerListView: FC<BannerListViewProps> = ({ banners }) => {
       priority: "high",
       sortable: true,
       searchable: true,
+      width: "100px",
     },
-
     {
       key: "image_url",
       label: "Imagen",
       priority: "high",
       sortable: true,
       searchable: true,
-      render: (imageURL: string) => {
-        return (
-          <div className="relative w-[200px] h-[50px] flex justify-center items-center">
-            {imageURL ? (
-              <Image
-                src={imageURL}
-                fill
-                sizes="200px"
-                priority
-                alt="image banner"
-                className="object-cover rounded-md"
-              />
-            ) : (
-              <div className="w-full h-full rounded-md flex justify-center items-center border-2 bg-slate-50">
-                <ImageOffIcon
-                  size={30}
-                  className="stroke-slate-300"
-                  strokeWidth={2}
-                />
-              </div>
-            )}
-          </div>
-        );
-      },
+      render: (imageURL: string) => <PreviewImageList imageURL={imageURL} />,
+      width: "100px",
     },
-
     {
       key: "link",
       label: "Link",
       priority: "medium",
       sortable: true,
+      // width: "100px",
       render: (linkURL: string) => {
         return (
-          <Link className="hover:underline" href={linkURL} target="_blank">
+          <Link
+            className="hover:underline w-[250px] inline-block text-nowrap overflow-hidden text-ellipsis"
+            href={linkURL}
+            target="_blank"
+          >
             {linkURL}
           </Link>
         );
@@ -97,7 +77,7 @@ export const BannerListView: FC<BannerListViewProps> = ({ banners }) => {
   };
 
   return (
-    <CardContent>
+    <>
       <Alert
         message="¿Estás seguro de eliminar este banner?"
         onSuccess={() => {
@@ -131,6 +111,6 @@ export const BannerListView: FC<BannerListViewProps> = ({ banners }) => {
           router.replace("/dashboard/banners/" + id);
         }}
       />
-    </CardContent>
+    </>
   );
 };

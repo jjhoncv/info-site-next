@@ -1,13 +1,9 @@
-import { BannerNewView } from "@/app/components/Banners/BannerNewView";
+import { BannerFields } from "@/app/components/Banners/bannerFields";
+import { FormCreate } from "@/app/components/FormCreate/FormCreate";
 import { PageUI } from "@/app/components/Page/Page";
 import { PageTitle } from "@/app/components/Page/PageTitle";
 
 export default async function BannerNewPage() {
-  // const users = toClient(await getUsers());
-  // const roles = toClient(await getRoles());
-
-  // if (!users) return null;
-
   return (
     <PageUI
       title={<PageTitle title="Nuevo Banner" />}
@@ -17,7 +13,10 @@ export default async function BannerNewPage() {
       ]}
       subtitle="Crear nuevo banner"
     >
-      <BannerNewView />
+      <FormCreate
+        api={{ url: "/api/admin/banners", method: "POST", withFiles: true }}
+        form={{ redirect: "/dashboard/banners", fields: BannerFields }}
+      />
     </PageUI>
   );
 }
