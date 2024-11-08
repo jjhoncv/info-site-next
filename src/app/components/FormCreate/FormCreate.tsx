@@ -1,64 +1,49 @@
 "use client";
 import { FetchCustomBody } from "@/lib/FetchCustomBody";
 import { handleKeyDown } from "@/lib/form";
-import { RenderPreviewImage } from "@/lib/renderPreviewImage";
 import { ToastFail, ToastSuccess } from "@/lib/splash";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { FC, useEffect, useState } from "react";
+import { FC, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { CardContent } from "../CardContent/CardContent";
 import { Button } from "../Form/Input/Button";
 import { Input } from "../Form/Input/Input";
 import { createDynamicSchema } from "./createDynamicSchema";
-import { formatBytes } from "@/lib/formatBytes";
-import { Image } from "lucide-react";
 import { DialogAssets } from "./DialogAssets";
+import { SliderImages } from "./SliderImages";
+import { isImageFile } from "@/lib/isImageFile";
 
-interface FieldRequired {
+// Types
+export interface FieldRequired {
   min?: string;
   url?: string;
 }
 
-interface FieldBasic {
+export interface FieldBasic {
   key: string;
   label?: string;
   value?: any;
   required?: FieldRequired | boolean;
 }
 
-interface FieldPrimary extends FieldBasic {
-  type: "primary";
-}
-
-interface FieldText extends FieldBasic {
-  type: "text";
-}
-
-interface FieldTextarea extends FieldBasic {
-  type: "textarea";
-}
-
 export interface FileOptions {
-  acceptImageTypes: string[];
-  maxFileSize: number;
-  dimensions: {
+  acceptImageTypes: string[] | undefined;
+  maxFileSize: number | undefined;
+  dimensions?: {
     min: { width: number; height: number };
     max: { width: number; height: number };
   };
 }
 
-export interface FieldFile extends FieldBasic {
-  type: "file";
-  value?: string | string[]; // URL o array de URLs para imágenes existentes
-  imageURL?: string;
+export type FieldType = "primary" | "text" | "textarea" | "file";
+
+export interface Field extends FieldBasic {
+  type: FieldType;
   multiple?: boolean;
-  options: FileOptions;
+  options?: FileOptions;
 }
-
-// interface FieldOptions {}
-
-export type Field = FieldText | FieldFile | FieldTextarea | FieldPrimary;
 
 interface FormCreateProps {
   api: {
@@ -73,8 +58,7 @@ interface FormCreateProps {
   };
 }
 
-// Función para extraer valores por defecto
-const extractDefaultValues = (fields: Field[]) => {
+const extractDefaultValues = (fields: Field[]): Record<string, any> => {
   return fields.reduce((acc, field) => {
     if ("value" in field && field.value !== undefined) {
       acc[field.key] = field.value;
@@ -85,91 +69,84 @@ const extractDefaultValues = (fields: Field[]) => {
 
 export const FormCreate: FC<FormCreateProps> = ({
   api,
-  form: { redirect, fields, id },
+  form: { redirect, fields: initialFields, id },
 }) => {
   const router = useRouter();
+  const [fields, setFields] = useState<Field[]>(initialFields);
+  const [dialogState, setDialogState] = useState<{
+    isOpen: boolean;
+    selectedField: Field | null;
+  }>({
+    isOpen: false,
+    selectedField: null,
+  });
 
   const schema = createDynamicSchema(fields);
-
   const defaultValues = extractDefaultValues(fields);
-
-  const [fieldFile, setFieldFile] = useState<FieldFile>();
 
   const {
     register,
     handleSubmit,
-    watch,
-    formState: { errors },
+    setValue,
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues,
     mode: "onChange",
   });
 
-  const [existingImages, setExistingImages] = useState<
-    Record<string, string[]>
-  >({});
+  const handleFileSelect = useCallback((field: Field) => {
+    setDialogState({
+      isOpen: true,
+      selectedField: field,
+    });
+  }, []);
 
-  const [openDialog, setOpenDialog] = useState(false);
+  const handleFilesAdd = useCallback(
+    (field: Field, files: any[]) => {
+      setValue(field.key, files);
+      setFields((prev) =>
+        prev.map((prevField) =>
+          prevField.key === field.key
+            ? {
+                ...prevField,
+                value: files.map((f) => f.path),
+              }
+            : prevField
+        )
+      );
+      setDialogState({ isOpen: false, selectedField: null });
+    },
+    [setValue]
+  );
 
-  useEffect(() => {
-    // Inicializar las imágenes existentes
-    const imageFields = fields.filter(
-      (field): field is FieldFile =>
-        field.type === "file" && field.value !== undefined
-    );
+  const onSubmit = async (data: any, e: React.FormEvent) => {
+    e.preventDefault();
 
-    const initialImages = imageFields.reduce((acc, field) => {
-      acc[field.key] = Array.isArray(field.value)
-        ? field.value
-        : field.value
-        ? [field.value]
-        : [];
-      return acc;
-    }, {} as Record<string, string[]>);
-
-    setExistingImages(initialImages);
-  }, [fields]);
-
-  const handleRemoveImage = (fieldKey: string, index: number) => {
-    setExistingImages((prev) => ({
-      ...prev,
-      [fieldKey]: prev[fieldKey]?.filter((_, i) => i !== index),
-    }));
-  };
-
-  const onSubmit = async (data: any) => {
     try {
       const formData = new FormData();
 
-      for (const key in data) {
+      // Procesar campos
+      Object.entries(data).forEach(([key, value]: any) => {
         const field = fields.find((f) => f.key === key);
-        if (!field) continue;
+        if (!field) return;
 
         if (field.type === "file") {
-          const files = data[key];
-          if (files instanceof FileList) {
-            if (field.multiple) {
-              Array.from(files).forEach((file, index) => {
-                formData.append(`${key}[]`, file);
-              });
-            } else {
-              // Para un solo archivo
-              if (files.length > 0) {
-                formData.append(key, files[0]);
-              }
-            }
-          }
-
-          // Agregar URLs de imágenes existentes que no fueron eliminadas
-          if (existingImages[key]?.length) {
-            existingImages[key].forEach((url) => {
-              formData.append(`${key}_existing[]`, url);
+          if (field.multiple) {
+            value.forEach((file: any) => {
+              formData.append(`${key}[]`, file.path);
             });
+          } else {
+            formData.append(key, value[0].path);
           }
         } else {
-          formData.append(key, data[key]);
+          formData.append(key, value);
         }
+      });
+
+      // Agregar ID si existe
+      if (id) {
+        formData.append("id", id);
       }
 
       const message = await FetchCustomBody({
@@ -185,102 +162,96 @@ export const FormCreate: FC<FormCreateProps> = ({
     }
   };
 
-  const handleClick = () => {};
-  return (
-    <CardContent>
-      <DialogAssets
-        open={openDialog}
-        setOpenDialog={setOpenDialog}
-        onClose={(files: FileList) => {}}
-        field={fieldFile}
-      />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {fields.map((field, key) => (
-          <div key={key} className="flex flex-col gap-1 mb-4">
-            {field.type === "text" && (
-              <Input
-                {...register(field.key)}
-                error={errors[field.key] as any}
-                label={field.label}
-                type={field.type}
-                onKeyDown={handleKeyDown}
-              />
-            )}
-
-            {field.type === "textarea" && (
-              <Input
-                {...register(field.key)}
-                error={errors[field.key] as any}
-                label={field.label}
-                type={field.type}
-                rows={2}
-                onKeyDown={handleKeyDown}
-              />
-            )}
-
-            {field.type === "file" && (
-              <>
-                <div className="flex flex-col gap-1">
-                  <label className="text-sm font-bold pl-1">
-                    {field.label}
-                  </label>
-                  <div
-                    onClick={() => {
-                      setOpenDialog(true);
-                      setFieldFile(field);
-                    }}
-                    className="bg-slate-100 w-full flex border items-center rounded px-3 py-2 min-h-[180px]"
-                  >
-                    <div className="gap-2 items-center w-full justify-center flex-col flex">
-                      <Image size={30} />
-                      <p>
-                        Click para añadir un archivo o arrasta y suelta un
-                        archivo en esta area
-                      </p>
-                    </div>
-                  </div>
+  const renderField = (field: Field) => {
+    switch (field.type) {
+      case "text":
+      case "textarea":
+        return (
+          <Input
+            {...register(field.key)}
+            error={errors[field.key] as any}
+            label={field.label}
+            type={field.type}
+            rows={field.type === "textarea" ? 2 : undefined}
+            onKeyDown={handleKeyDown}
+          />
+        );
+      case "file":
+        return (
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-bold pl-1">{field.label}</label>
+            {field.value &&
+            Array.isArray(field.value) &&
+            field.value.length > 0 ? (
+              <div className="bg-slate-100 w-full flex border items-center rounded px-3 py-2 min-h-[240px]">
+                <div className="w-full h-full max-h-[240px]">
+                  {field.value.every(isImageFile) ? (
+                    <SliderImages
+                      images={field.value}
+                      onClickEdit={() => handleFileSelect(field)}
+                    />
+                  ) : (
+                    <ul>
+                      {field.value.map((file, index) => (
+                        <li key={index}>{file}</li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
-                {/* <Input
-                  {...register(field.key)}
-                  error={errors[field.key] as any}
-                  label={field.label}
-                  type="file"
-                  multiple={field.multiple}
-                  options={field.options}
-                  accept={field.options.acceptImageTypes.join(",")}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const files = e.target.files;
-                    if (files?.length) {
-                      register(field.key).onChange(e);
-                    }
-                  }}
-                />
-
-                <div
-                  className={`bg-slate-100 w-full border rounded px-3 py-2 min-h-[180px] relative`}
-                >
-                  <RenderPreviewImage
-                    field={watch(field.key)}
-                    imageURL={existingImages[field.key]?.[0]}
-                    multiple={field.multiple}
-                    className="h-[100px]"
-                    onRemove={
-                      field.multiple
-                        ? (index) => handleRemoveImage(field.key, index)
-                        : undefined
-                    }
-                  />
-                </div> */}
-              </>
+              </div>
+            ) : (
+              <div
+                onClick={() => handleFileSelect(field)}
+                className="bg-slate-100 w-full flex border items-center rounded px-3 py-2 min-h-[240px] cursor-pointer hover:bg-slate-200 transition-colors"
+              >
+                <div className="gap-2 items-center w-full justify-center flex-col flex">
+                  <ImageIcon size={30} className="text-gray-400" />
+                  <p className="text-center text-gray-500">
+                    Click para añadir un archivo o arrasta y suelta un archivo
+                    en esta área
+                  </p>
+                </div>
+              </div>
             )}
           </div>
-        ))}
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <CardContent>
+      {dialogState.isOpen && dialogState.selectedField && (
+        <DialogAssets
+          open={dialogState.isOpen}
+          setOpenDialog={(isOpen) =>
+            setDialogState((prev) => ({ ...prev, isOpen }))
+          }
+          addFilesToForm={handleFilesAdd}
+          field={dialogState.selectedField}
+        />
+      )}
+
+      <form onSubmit={handleSubmit(onSubmit as any)} noValidate>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {fields.map((field, index) => (
+            <div
+              key={`${field.key}-${index}`}
+              className="flex flex-col gap-1 mb-4"
+            >
+              {renderField(field)}
+            </div>
+          ))}
+        </div>
 
         <div className="flex gap-3 justify-end mt-8">
-          <Button type="cancel" href={redirect}>
+          <Button type="cancel" href={redirect} disabled={isSubmitting}>
             Cancelar
           </Button>
-          <Button type="submit">Añadir</Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {id ? "Guardar cambios" : "Añadir"}
+          </Button>
         </div>
       </form>
     </CardContent>

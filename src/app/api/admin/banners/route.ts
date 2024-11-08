@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
 
-    const file = formData.get("image_url") as File;
+    const stringFileURL = formData.get("image_url") as any;
     const title = formData.get("title") as string;
     const subtitle = formData.get("subtitle") as string;
     const description = formData.get("description") as string;
@@ -21,14 +21,12 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    let itemFile = {};
-    if (file) {
-      const uploadDir = join(process.cwd(), "public", "uploads");
-      const fileUrl = await writeFileServer(uploadDir, file);
-      itemFile = { image_url: fileUrl };
-    }
 
     try {
+      let itemFile = {};
+      if (stringFileURL) {
+        itemFile = { image_url: stringFileURL };
+      }
       const banner = await createBanner({
         description,
         link,
@@ -74,7 +72,7 @@ export async function PATCH(req: NextRequest) {
   try {
     const formData = await req.formData();
 
-    const file = formData.get("image_url") as File;
+    const stringFileURL = formData.get("image_url") as any;
     const title = formData.get("title") as string;
     const subtitle = formData.get("subtitle") as string;
     const description = formData.get("description") as string;
@@ -88,14 +86,12 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    let itemFile = {};
-    if (file) {
-      const uploadDir = join(process.cwd(), "public", "uploads");
-      const fileUrl = await writeFileServer(uploadDir, file);
-      itemFile = { image_url: fileUrl };
-    }
-
     try {
+      let itemFile = {};
+      if (stringFileURL) {
+        itemFile = { image_url: stringFileURL };
+      }
+
       const banner = await updateBanner(id, {
         description,
         link,

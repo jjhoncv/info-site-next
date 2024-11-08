@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { formatBytes } from "./formatBytes";
 import { FileOptions } from "@/app/components/FormCreate/FormCreate";
-
 interface schemaImageValidationProps extends FileOptions {
   multiple: boolean;
 }
@@ -22,7 +21,6 @@ export const schemaImageValidation = ({
     .optional()
     .refine(
       (value) => {
-        console.log("valuexxxxx", value);
         if (typeof value === "string") return true;
         if (!value) return false;
         const files = value as FileList;
@@ -39,9 +37,9 @@ export const schemaImageValidation = ({
     .superRefine(async (value, ctx) => {
       if (typeof value === "string" || !value) return;
 
-      const files = Array.from(value as FileList).filter(
-        (file) => typeof file !== "string"
-      );
+      const files = Array.from(value as FileList)
+        .filter((file) => typeof file !== "string")
+        .filter((file: any) => !file.createdAt);
 
       const imageErrors: ImageValidationError[] = [];
 
@@ -51,14 +49,14 @@ export const schemaImageValidation = ({
         const errors: string[] = [];
 
         // Validar tamaño
-        if (file.size > maxFileSize) {
+        if (maxFileSize && file.size > maxFileSize) {
           errors.push(
             `El archivo excede el tamaño máximo de ${formatBytes(maxFileSize)}`
           );
         }
 
         // Validar tipo
-        if (!acceptImageTypes.includes(file.type)) {
+        if (acceptImageTypes && !acceptImageTypes.includes(file.type)) {
           errors.push(
             `Formato no válido. Formatos permitidos: ${acceptImageTypes.join(
               ", "
@@ -68,6 +66,7 @@ export const schemaImageValidation = ({
 
         // Validar dimensiones
         try {
+          if (!dimensions) return true;
           const dimensions_valid = await new Promise<boolean>((resolve) => {
             const reader = new FileReader();
             reader.onload = (e) => {

@@ -16,7 +16,6 @@ export async function getPermissions(
 }
 
 export async function deletePermission(permissionName: string) {
-  // console.log("remove permissionName", permissionName);
   const queryPermission = await executeQuery({
     query: `DELETE FROM permissions WHERE name like ?`,
     values: [permissionName + ".%"],

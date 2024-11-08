@@ -28,14 +28,6 @@ export const BannerFields: Field[] = [
     },
   },
   {
-    key: "subtitle",
-    label: "Subtítulo",
-    type: "text",
-    required: {
-      min: "Subtítulo es requerido",
-    },
-  },
-  {
     key: "description",
     label: "Descripción",
     type: "textarea",
@@ -44,11 +36,19 @@ export const BannerFields: Field[] = [
     },
   },
   {
+    key: "subtitle",
+    label: "Subtítulo",
+    type: "text",
+    required: {
+      min: "Subtítulo es requerido",
+    },
+  },
+  {
     key: "image_url",
     label: "Imagen",
     type: "file",
     required: true,
-    multiple: true,
+    multiple: false,
     options: BannerFileOptions,
   },
 ];

@@ -12,7 +12,7 @@ export const PreviewImageList = ({ imageURL }: PreviewImageList) => {
   return (
     <>
       <div
-        className="relative w-[100px] h-[25px] flex"
+        className="relative"
         onMouseEnter={() => {
           if (imageURL) {
             setShow(true);
@@ -25,26 +25,31 @@ export const PreviewImageList = ({ imageURL }: PreviewImageList) => {
         }}
       >
         {show && imageURL && (
-          <div className="absolute top-0 left-0  w-[200px] h-[200px] flex">
+          <div className="absolute z-50 h-[60px] w-[60px] rounded-full overflow-hidden top-[calc(100%-45px)] right-[calc(100%-45px)]">
+            <Image
+              src={imageURL}
+              fill
+              priority
+              alt="image banner"
+              className="object-cover"
+            />
+          </div>
+        )}
+        {imageURL ? (
+          <div
+            className={`relative w-[30px] h-[30px] rounded-full overflow-hidden ${
+              show ? `opacity-0` : `opacity-100`
+            }`}
+          >
             <Image
               src={imageURL}
               fill
               sizes="200px"
               priority
               alt="image banner"
-              className="object-top object-contain rounded"
+              className="object-cover"
             />
           </div>
-        )}
-        {imageURL ? (
-          <Image
-            src={imageURL}
-            fill
-            sizes="200px"
-            priority
-            alt="image banner"
-            className="object-left object-contain rounded"
-          />
         ) : (
           <ImageOffIcon size={20} strokeWidth={1.5} />
         )}

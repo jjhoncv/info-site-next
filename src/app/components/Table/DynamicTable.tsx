@@ -13,13 +13,6 @@ import Link from "next/link";
 import { FC, ReactNode, useEffect, useState } from "react";
 
 import debounce from "lodash/debounce";
-// import {
-//   // DragDropContext,
-//   // Draggable,
-//   // Droppable,
-//   DroppableProvided,
-//   DropResult,
-// } from "react-beautiful-dnd";
 import { StrictModeDroppable } from "../StrictModeDroppable";
 import { Input } from "../Form/Input/Input";
 import { Select } from "../Form/Input/Select";
@@ -245,7 +238,7 @@ export const DynamicTable: FC<DynamicTableProps> = ({
 
       <CardContent className={"!p-2 !pb-0 !my-3"}>
         {/* Vista Desktop */}
-        <div className="hidden lg:block overflow-x-auto">
+        <div className="hidden lg:block">
           <DragDropContext onDragEnd={handleDragEnd}>
             <StrictModeDroppable droppableId="table">
               {(provided: DroppableProvided) => (
