@@ -3,38 +3,40 @@ import { FormCreate } from "@/app/components/admin/components/FormCreate/FormCre
 import { mergeFieldsWithData } from "@/app/components/admin/components/FormCreate/mergeFieldsWithData";
 import { PageUI } from "@/app/components/admin/components/Page/Page";
 import { PageTitle } from "@/app/components/admin/components/Page/PageTitle";
+import { ServiceFields } from "@/app/components/admin/components/Services/serviceFields";
 
-import { Banner } from "@/interfaces";
+import { Banner, Service } from "@/interfaces";
 import { toClient } from "@/lib/utils";
 import { getBannerById } from "@/models/banner";
+import { getServiceById } from "@/services/serviceService";
 
 export const revalidate = 0; // Deshabilitar cache estático
 
-export default async function UserEditPage({
+export default async function ServiceEditPage({
   params,
 }: {
   params: { id: string };
 }) {
   const { id } = params;
 
-  const [banner] = (await Promise.all([
-    getBannerById(id).then(toClient),
-  ])) as Banner[];
+  const [service] = (await Promise.all([
+    getServiceById(id).then(toClient),
+  ])) as Service[];
 
-  const fieldsWithValues = mergeFieldsWithData(BannerFields, banner);
+  const fieldsWithValues = mergeFieldsWithData(ServiceFields, service);
 
   return (
     <PageUI
-      title={<PageTitle title="Editar Banner" />}
+      title={<PageTitle title="Editar Service" />}
       breadcrumb={[
-        { label: "Banners", url: "/dashboard/users" },
-        { label: "Editar Banner" },
+        { label: "Service", url: "/dashboard/services" },
+        { label: "Editar Service" },
       ]}
-      subtitle="Editar Banner"
+      subtitle="Editar Service"
     >
       <FormCreate
-        api={{ url: "/api/admin/banners", method: "PATCH", withFiles: true }}
-        form={{ redirect: "/dashboard/banners", fields: fieldsWithValues, id }}
+        api={{ url: "/api/admin/services", method: "PATCH", withFiles: true }}
+        form={{ redirect: "/dashboard/services", fields: fieldsWithValues, id }}
       />
     </PageUI>
   );

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { formatBytes } from "./formatBytes";
-import { FileOptions } from "@/app/components/FormCreate/FormCreate";
+import { FileOptions } from "@/app/components/admin/components/FormCreate/types/fileManagement";
 interface schemaImageValidationProps extends FileOptions {
   multiple: boolean;
 }

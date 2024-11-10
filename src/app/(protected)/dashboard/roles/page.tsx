@@ -1,7 +1,7 @@
-import { PageUI } from "@/app/components/Page/Page";
-import { PageButton } from "@/app/components/Page/PageButton";
-import { PageTitle } from "@/app/components/Page/PageTitle";
-import { RolesListView } from "@/app/components/Roles/RolesListView";
+import { PageUI } from "@/app/components/admin/components/Page/Page";
+import { PageButton } from "@/app/components/admin/components/Page/PageButton";
+import { PageTitle } from "@/app/components/admin/components/Page/PageTitle";
+import { RolesListView } from "@/app/components/admin/components/Roles/RolesListView";
 import { RoleName } from "@/interfaces";
 import { hasPermission } from "@/lib/hasPermission";
 import { toClient } from "@/lib/utils";

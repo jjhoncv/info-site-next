@@ -1,7 +1,7 @@
-import { BannerFields } from "@/app/components/Banners/bannerFields";
-import { FormCreate } from "@/app/components/FormCreate/FormCreate";
-import { PageUI } from "@/app/components/Page/Page";
-import { PageTitle } from "@/app/components/Page/PageTitle";
+import { BannerFields } from "@/app/components/admin/components/Banners/bannerFields";
+import { FormCreate } from "@/app/components/admin/components/FormCreate/FormCreate";
+import { PageUI } from "@/app/components/admin/components/Page/Page";
+import { PageTitle } from "@/app/components/admin/components/Page/PageTitle";
 
 export default async function BannerNewPage() {
   return (

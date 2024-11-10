@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     const description = formData.get("description") as string;
     const link = formData.get("link") as string;
 
-    if (!title || !subtitle || !description || !link) {
+    if (!title || !link) {
       return NextResponse.json(
         { error: "Missing required fields", success: false },
         { status: 400 }
@@ -79,7 +79,7 @@ export async function PATCH(req: NextRequest) {
     const link = formData.get("link") as string;
     const id = formData.get("id") as string;
 
-    if (!title || !subtitle || !description || !link || !id) {
+    if (!title || !link || !id) {
       return NextResponse.json(
         { error: "Missing required fields", success: false },
         { status: 400 }

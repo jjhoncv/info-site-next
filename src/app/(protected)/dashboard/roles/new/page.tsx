@@ -1,6 +1,6 @@
-import { PageUI } from "@/app/components/Page/Page";
-import { PageTitle } from "@/app/components/Page/PageTitle";
-import { RoleNewView } from "@/app/components/Roles/RoleNewView";
+import { PageUI } from "@/app/components/admin/components/Page/Page";
+import { PageTitle } from "@/app/components/admin/components/Page/PageTitle";
+import { RoleNewView } from "@/app/components/admin/components/Roles/RoleNewView";
 import { toClient } from "@/lib/utils";
 import { getSections } from "@/models/sections";
 

@@ -1,4 +1,4 @@
-import RegisterAdmin from "@/app/components/RegisterAdmin/ui/RegisterAdmin";
+import RegisterAdmin from "@/app/components/admin/components/RegisterAdmin/ui/RegisterAdmin";
 import React from "react";
 
 function RegisterPage() {

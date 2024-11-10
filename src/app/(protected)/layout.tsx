@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import React from "react";
-import { LayoutPageAdmin } from "../components/LayoutPageAdmin";
+import { LayoutPageAdmin } from "../components/admin/components/LayoutPageAdmin";
 import { Toaster } from "react-hot-toast";
 
 export default async function ProtectedLayout({

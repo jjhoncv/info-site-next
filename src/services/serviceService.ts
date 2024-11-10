@@ -9,8 +9,8 @@ export async function getAllServices(): Promise<Service[]> {
   return JSON.parse(JSON.stringify(await findAllServices()));
 }
 
-export async function getServiceById(id: number): Promise<Service | null> {
-  return await findServiceById(id);
+export async function getServiceById(id: string): Promise<Service | null> {
+  return await findServiceById(Number(id));
 }
 
 export async function getServiceImages(

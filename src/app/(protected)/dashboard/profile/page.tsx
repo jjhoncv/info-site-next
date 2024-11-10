@@ -1,6 +1,6 @@
-import { PageUI } from "@/app/components/Page/Page";
-import { PageTitle } from "@/app/components/Page/PageTitle";
-import { ProfileEditView } from "@/app/components/Profile/ProfileEditView";
+import { PageUI } from "@/app/components/admin/components/Page/Page";
+import { PageTitle } from "@/app/components/admin/components/Page/PageTitle";
+import { ProfileEditView } from "@/app/components/admin/components/Profile/ProfileEditView";
 import { auth } from "@/auth";
 
 export const revalidate = 0; // Deshabilitar cache estático

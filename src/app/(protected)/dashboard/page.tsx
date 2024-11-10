@@ -1,4 +1,4 @@
-import { CardContent } from "@/app/components/CardContent/CardContent";
+import { CardContent } from "@/app/components/admin/components/CardContent/CardContent";
 import { auth } from "@/auth";
 import { RoleName } from "@/interfaces";
 import { hasPermission } from "@/lib/hasPermission";

@@ -1,4 +1,4 @@
-import { DataTable } from "@/app/components/DataTable";
+import { DataTable } from "@/app/components/admin/components/DataTable";
 import { findAllProjects } from "@/models/project";
 
 export default async function BannersPage() {

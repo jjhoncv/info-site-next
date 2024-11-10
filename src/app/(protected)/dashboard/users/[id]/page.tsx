@@ -1,6 +1,6 @@
-import { PageUI } from "@/app/components/Page/Page";
-import { PageTitle } from "@/app/components/Page/PageTitle";
-import { UserEditView } from "@/app/components/Users/UserEditView";
+import { PageUI } from "@/app/components/admin/components/Page/Page";
+import { PageTitle } from "@/app/components/admin/components/Page/PageTitle";
+import { UserEditView } from "@/app/components/admin/components/Users/UserEditView";
 import { toClient } from "@/lib/utils";
 import { getRoles } from "@/models/role";
 import { getUser } from "@/models/user";

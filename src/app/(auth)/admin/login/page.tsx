@@ -1,4 +1,4 @@
-import { LoginAdmin } from "@/app/components/LoginAdmin";
+import { LoginAdmin } from "@/app/components/admin/components/LoginAdmin";
 import React from "react";
 
 function LoginPage() {

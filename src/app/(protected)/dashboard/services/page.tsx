@@ -1,23 +1,39 @@
-import { DataTable } from "@/app/components/DataTable";
-import { PERMISSIONS } from "@/interfaces";
+import { PageUI } from "@/app/components/admin/components/Page/Page";
+import { PageButton } from "@/app/components/admin/components/Page/PageButton";
+import { PageTitle } from "@/app/components/admin/components/Page/PageTitle";
+import { ServiceListView } from "@/app/components/admin/components/Services/ServiceListView";
+import { RoleName } from "@/interfaces";
 import { hasPermission } from "@/lib/hasPermission";
-import { findAllServices } from "@/models/service";
+import { toClient } from "@/lib/utils";
+import { getAllServices } from "@/services/serviceService";
+import { Suspense } from "react";
 
-export default async function BannersPage() {
-  const services = await findAllServices();
+function LoadingTable() {
+  return <div>Cargando servicios...</div>;
+}
+
+export default async function ServiceListPage() {
+  const permission = await hasPermission(RoleName.SUPERADMIN);
+
+  const [services] = await Promise.all([getAllServices().then(toClient)]);
+  if (!services) return <div>No se encontraron services</div>;
+
+  if (!permission) {
+    return <div>Unauthorized</div>;
+  }
 
   return (
-    <div className="container">
-      <h1>Services</h1>
-      <DataTable
-        data={services}
-        columns={[
-          { key: "title", header: "Title" },
-          { key: "image_url", header: "Image" },
-          { key: "slug", header: "Slug" },
-          { key: "display_order", header: "Display Order" },
-        ]}
-      />
-    </div>
+    <PageUI
+      title={<PageTitle title="Services" />}
+      subtitle="Todos los services"
+      breadcrumb={[{ label: "Services" }]}
+      options={
+        <PageButton href="/dashboard/services/new">Nuevo service</PageButton>
+      }
+    >
+      <Suspense fallback={<LoadingTable />}>
+        <ServiceListView services={services} />
+      </Suspense>
+    </PageUI>
   );
 }

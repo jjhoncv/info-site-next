@@ -1,7 +1,7 @@
-import { BannerListView } from "@/app/components/Banners/BannerListView";
-import { PageUI } from "@/app/components/Page/Page";
-import { PageButton } from "@/app/components/Page/PageButton";
-import { PageTitle } from "@/app/components/Page/PageTitle";
+import { BannerListView } from "@/app/components/admin/components/Banners/BannerListView";
+import { PageUI } from "@/app/components/admin/components/Page/Page";
+import { PageButton } from "@/app/components/admin/components/Page/PageButton";
+import { PageTitle } from "@/app/components/admin/components/Page/PageTitle";
 import { RoleName } from "@/interfaces";
 import { hasPermission } from "@/lib/hasPermission";
 import { toClient } from "@/lib/utils";
