@@ -1,34 +1,33 @@
 import { parseJSON } from "@/lib/utils";
-import {
-  getBanners,
-  getBannerById,
-  createBanner,
-  updateBanner,
-  deleteBanner,
-} from "../models/banner";
+import { BannerModel } from "../models/BannerModel";
 import { Banner } from "@/interfaces";
 
-export async function findAllBanners(): Promise<Banner[]> {
-  return parseJSON(await getBanners());
+export async function getBanners(): Promise<Banner[]> {
+  const banner = new BannerModel();
+  return parseJSON(await banner.getBanners());
 }
 
-export async function findBannerById(id: number): Promise<Banner | null> {
-  return parseJSON(await getBannerById(id));
+export async function getBanner(id: string): Promise<Banner | null> {
+  const banner = new BannerModel();
+  return parseJSON(await banner.getBanner(id));
 }
 
-export async function newBanner(
-  banner: Omit<Banner, "id" | "created_at" | "updated_at">
+export async function createBanner(
+  banner: Omit<Banner, "id" | "created_at" | "updated_at" | "image_url">
 ): Promise<Banner> {
-  return parseJSON(await createBanner(banner));
+  const obanner = new BannerModel();
+  return parseJSON(await obanner.createBanner(banner));
 }
 
-export async function editBanner(
-  id: number,
+export async function updateBanner(
+  id: string,
   banner: Partial<Banner>
 ): Promise<boolean> {
-  return parseJSON(await updateBanner(id, banner));
+  const obanner = new BannerModel();
+  return parseJSON(await obanner.updateBanner(id, banner));
 }
 
-export async function removeBanner(id: number): Promise<boolean> {
-  return parseJSON(await deleteBanner(id));
+export async function deleteBanner(id: number): Promise<boolean> {
+  const obanner = new BannerModel();
+  return parseJSON(await obanner.deleteBanner(id));
 }

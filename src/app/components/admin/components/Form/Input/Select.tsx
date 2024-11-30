@@ -26,7 +26,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             className={selectClassName}
             ref={ref}
             {...props}
-            style={{ WebkitAppearance: "none", paddingRight: "20px" }}
+            style={{ WebkitAppearance: "none", paddingRight: "25px" }}
           >
             {children}
           </select>

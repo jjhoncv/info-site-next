@@ -1,9 +1,8 @@
 import { PageUI } from "@/app/components/admin/components/Page/Page";
 import { PageTitle } from "@/app/components/admin/components/Page/PageTitle";
 import { UserEditView } from "@/app/components/admin/components/Users/UserEditView";
-import { toClient } from "@/lib/utils";
-import { getRoles } from "@/models/role";
-import { getUser } from "@/models/user";
+import { getRoles } from "@/services/roleService";
+import { getUser } from "@/services/userService";
 
 export const revalidate = 0; // Deshabilitar cache estático
 
@@ -14,10 +13,9 @@ export default async function UserEditPage({
 }) {
   const { id } = params;
 
-  const [user, roles] = await Promise.all([
-    getUser(id).then(toClient),
-    getRoles().then(toClient),
-  ]);
+  const [user, roles] = await Promise.all([getUser(id), getRoles()]);
+  if (!user) return <div>No se encontraron user</div>;
+  if (!roles) return <div>No se encontraron roles</div>;
 
   return (
     <PageUI

@@ -2,13 +2,10 @@ import { PageUI } from "@/app/components/admin/components/Page/Page";
 import { PageTitle } from "@/app/components/admin/components/Page/PageTitle";
 import { UserNewView } from "@/app/components/admin/components/Users/UserNewView";
 import { toClient } from "@/lib/utils";
-import { getRoles } from "@/models/role";
+import { getRoles } from "@/services/roleService";
 
 export default async function UserNewPage() {
-  // const users = toClient(await getUsers());
   const roles = toClient(await getRoles());
-
-  // if (!users) return null;
 
   return (
     <PageUI

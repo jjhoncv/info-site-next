@@ -23,7 +23,7 @@ export const Button: FC<ButtonProps> = ({
     disabled ? `!bg-gray-300 !hover:bg-gray-200 !cursor-not-allowed` : ``
   }`;
   const classOutline =
-    "border hover:border-slate-300 hover:bg-slate-100 transition-colors";
+    "border hover:border-slate-300 bg-slate-300 hover:bg-gray-400 transition-colors";
   const classBg = "bg-gray-800 text-white hover:bg-sky-600 transition-colors";
 
   return (

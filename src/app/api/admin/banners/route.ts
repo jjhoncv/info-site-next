@@ -1,32 +1,47 @@
-import { writeFileServer } from "@/lib/writeFileServer";
-import { createBanner, updateBanner } from "@/models/banner";
-import { removeBanner } from "@/services/bannerService";
-import { writeFile } from "fs/promises";
-import { NextRequest, NextResponse } from "next/server";
-import { join } from "path";
+import { apiHandler, createResponse, handleError } from "@/lib/handlerApi";
+import {
+  createBanner,
+  deleteBanner,
+  updateBanner,
+} from "@/services/bannerService";
+import { NextRequest } from "next/server";
+
+// Función helper para procesar el formData
+const processFormData = async (formData: FormData) => {
+  const stringFileURL = formData.get("image_url") as string;
+  const title = formData.get("title") as string;
+  const subtitle = formData.get("subtitle") as string;
+  const description = formData.get("description") as string;
+  const link = formData.get("link") as string;
+  const id = formData.get("id") as string;
+
+  const itemFile = stringFileURL ? { image_url: stringFileURL } : {};
+
+  return {
+    id,
+    title,
+    subtitle,
+    description,
+    link,
+    itemFile,
+    display_order: 9, // Considera hacer esto configurable
+  };
+};
 
 export async function POST(req: NextRequest) {
-  try {
+  return apiHandler(async () => {
     const formData = await req.formData();
-
-    const stringFileURL = formData.get("image_url") as any;
-    const title = formData.get("title") as string;
-    const subtitle = formData.get("subtitle") as string;
-    const description = formData.get("description") as string;
-    const link = formData.get("link") as string;
+    const { title, link, description, subtitle, itemFile } =
+      await processFormData(formData);
 
     if (!title || !link) {
-      return NextResponse.json(
+      return createResponse(
         { error: "Missing required fields", success: false },
-        { status: 400 }
+        400
       );
     }
 
     try {
-      let itemFile = {};
-      if (stringFileURL) {
-        itemFile = { image_url: stringFileURL };
-      }
       const banner = await createBanner({
         description,
         link,
@@ -35,63 +50,35 @@ export async function POST(req: NextRequest) {
         display_order: 9,
         ...itemFile,
       });
-      const response = NextResponse.json(
+
+      return createResponse(
         {
           message: "Banner creado",
           success: true,
           banner,
         },
-        {
-          status: 200,
-        }
+        200
       );
-      return response;
     } catch (error: any) {
-      const response = NextResponse.json(
-        {
-          message: error.sqlMessage,
-          success: false,
-        },
-        { status: 400 }
-      );
-      return response;
+      return handleError(error, 400);
     }
-  } catch (error: any) {
-    const response = NextResponse.json(
-      {
-        message: error.sqlMessage,
-        success: false,
-      },
-      { status: 500 }
-    );
-    return response;
-  }
+  });
 }
 
 export async function PATCH(req: NextRequest) {
-  try {
+  return apiHandler(async () => {
     const formData = await req.formData();
-
-    const stringFileURL = formData.get("image_url") as any;
-    const title = formData.get("title") as string;
-    const subtitle = formData.get("subtitle") as string;
-    const description = formData.get("description") as string;
-    const link = formData.get("link") as string;
-    const id = formData.get("id") as string;
+    const { id, title, link, description, subtitle, itemFile } =
+      await processFormData(formData);
 
     if (!title || !link || !id) {
-      return NextResponse.json(
+      return createResponse(
         { error: "Missing required fields", success: false },
-        { status: 400 }
+        400
       );
     }
 
     try {
-      let itemFile = {};
-      if (stringFileURL) {
-        itemFile = { image_url: stringFileURL };
-      }
-
       const banner = await updateBanner(id, {
         description,
         link,
@@ -100,76 +87,43 @@ export async function PATCH(req: NextRequest) {
         display_order: 9,
         ...itemFile,
       });
-      const response = NextResponse.json(
+
+      return createResponse(
         {
           message: "Banner actualizado",
           success: true,
           banner,
         },
-        {
-          status: 200,
-        }
+        200
       );
-      return response;
     } catch (error: any) {
-      const response = NextResponse.json(
-        {
-          message: error.sqlMessage,
-          success: false,
-        },
-        { status: 400 }
-      );
-      return response;
+      return handleError(error, 400);
     }
-  } catch (error: any) {
-    const response = NextResponse.json(
-      {
-        message: error.sqlMessage,
-        success: false,
-      },
-      { status: 500 }
-    );
-    return response;
-  }
+  });
 }
 
 export async function DELETE(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const { id }: any = body;
+  return apiHandler(async () => {
+    const { id } = await req.json();
 
-    // Validar los datos de entrada
     if (!id) {
-      return NextResponse.json(
+      return createResponse(
         { error: "Missing required fields", success: false },
-        { status: 400 }
+        400
       );
     }
 
     try {
-      await removeBanner(id);
-
-      const response = NextResponse.json(
+      await deleteBanner(id);
+      return createResponse(
         {
           message: "Banner eliminado",
           success: true,
         },
-        {
-          status: 200,
-        }
+        200
       );
-      return response;
     } catch (error: any) {
-      const response = NextResponse.json(
-        {
-          message: error.message,
-          success: false,
-        },
-        { status: 400 }
-      );
-      return response;
+      return handleError(error, 400);
     }
-  } catch (error) {
-    console.error("Error eliminando banner en:", error);
-  }
+  });
 }

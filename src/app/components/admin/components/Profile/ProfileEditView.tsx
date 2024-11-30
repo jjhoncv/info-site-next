@@ -264,9 +264,6 @@ export const ProfileEditView: FC<ProfileEditViewProps> = ({ user }) => {
           </div>
 
           <div className="flex gap-3 justify-end mt-8">
-            <Button type="cancel" href="/dashboard/users">
-              Cancelar
-            </Button>
             <Button type="submit" disabled={isSubmitting}>
               Actualizar
             </Button>

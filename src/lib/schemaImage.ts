@@ -1,8 +1,10 @@
 import { z } from "zod";
 import { formatBytes } from "./formatBytes";
 import { FileOptions } from "@/app/components/admin/components/FormCreate/types/fileManagement";
-interface schemaImageValidationProps extends FileOptions {
-  multiple: boolean;
+import { isArray } from "lodash";
+interface schemaImageValidationProps {
+  multiple?: boolean;
+  options?: FileOptions;
 }
 
 interface ImageValidationError {
@@ -11,9 +13,7 @@ interface ImageValidationError {
 }
 
 export const schemaImageValidation = ({
-  acceptImageTypes,
-  dimensions,
-  maxFileSize,
+  options,
   multiple,
 }: schemaImageValidationProps) => {
   return z
@@ -21,6 +21,8 @@ export const schemaImageValidation = ({
     .optional()
     .refine(
       (value) => {
+        // console.log("value", value);
+        if (value === undefined) return true;
         if (typeof value === "string") return true;
         if (!value) return false;
         const files = value as FileList;
@@ -35,7 +37,10 @@ export const schemaImageValidation = ({
       }
     )
     .superRefine(async (value, ctx) => {
-      if (typeof value === "string" || !value) return;
+      if (!value) return true;
+      if (isArray(value)) return true;
+
+      // if ((value && typeof value === "string") || !value) return;
 
       const files = Array.from(value as FileList)
         .filter((file) => typeof file !== "string")
@@ -49,16 +54,23 @@ export const schemaImageValidation = ({
         const errors: string[] = [];
 
         // Validar tamaño
-        if (maxFileSize && file.size > maxFileSize) {
+
+        if (options && options.maxFileSize && file.size > options.maxFileSize) {
           errors.push(
-            `El archivo excede el tamaño máximo de ${formatBytes(maxFileSize)}`
+            `El archivo excede el tamaño máximo de ${formatBytes(
+              options.maxFileSize
+            )}`
           );
         }
 
         // Validar tipo
-        if (acceptImageTypes && !acceptImageTypes.includes(file.type)) {
+        if (
+          options &&
+          options.acceptImageTypes &&
+          !options.acceptImageTypes.includes(file.type)
+        ) {
           errors.push(
-            `Formato no válido. Formatos permitidos: ${acceptImageTypes.join(
+            `Formato no válido. Formatos permitidos: ${options.acceptImageTypes.join(
               ", "
             )}`
           );
@@ -66,30 +78,41 @@ export const schemaImageValidation = ({
 
         // Validar dimensiones
         try {
-          if (!dimensions) return true;
-          const dimensions_valid = await new Promise<boolean>((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const img = new Image();
-              img.onload = () => {
-                const meetsDimensions =
-                  img.width >= dimensions.min.width &&
-                  img.height >= dimensions.min.height &&
-                  img.width <= dimensions.max.width &&
-                  img.height <= dimensions.max.height;
-                resolve(meetsDimensions);
+          if (options && !options.dimensions) return true;
+          if (!options) return true;
+          const dimensions = options.dimensions;
+          if (
+            dimensions &&
+            dimensions.min &&
+            dimensions.min.width &&
+            dimensions.min.height &&
+            dimensions.max &&
+            dimensions.max.width &&
+            dimensions.max.height
+          ) {
+            const dimensions_valid = await new Promise<boolean>((resolve) => {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                  const meetsDimensions =
+                    img.width >= dimensions?.min.width &&
+                    img.height >= dimensions.min.height &&
+                    img.width <= dimensions.max.width &&
+                    img.height <= dimensions.max.height;
+                  resolve(meetsDimensions);
+                };
+                img.onerror = () => resolve(false);
+                img.src = e.target?.result as string;
               };
-              img.onerror = () => resolve(false);
-              img.src = e.target?.result as string;
-            };
-            reader.onerror = () => resolve(false);
-            reader.readAsDataURL(file);
-          });
-
-          if (!dimensions_valid) {
-            errors.push(
-              `Las dimensiones deben estar entre ${dimensions.min.width}x${dimensions.min.height} y ${dimensions.max.width}x${dimensions.max.height} píxeles`
-            );
+              reader.onerror = () => resolve(false);
+              reader.readAsDataURL(file);
+            });
+            if (!dimensions_valid) {
+              errors.push(
+                `Las dimensiones deben estar entre ${dimensions.min.width}x${dimensions.min.height} y ${dimensions.max.width}x${dimensions.max.height} píxeles`
+              );
+            }
           }
         } catch (error) {
           errors.push("Error al validar las dimensiones de la imagen");

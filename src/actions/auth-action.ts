@@ -2,10 +2,10 @@
 
 import { signIn } from "@/auth";
 import { loginSchema, signupSchema } from "@/lib/zod";
-import { createUser, getUserByEmail } from "@/models/user";
+import { UserModel } from "@/models/UserModel";
+import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 import { z } from "zod";
-import bcrypt from "bcryptjs";
 
 export const loginAction = async (values: z.infer<typeof loginSchema>) => {
   try {
@@ -30,8 +30,10 @@ export const registerAction = async (values: z.infer<typeof signupSchema>) => {
       return { error: "Invalid data" };
     }
 
+    const ouser = new UserModel();
+
     // verficar si el usuario existe en la base de datos
-    const user = await getUserByEmail(data.email);
+    const user = await ouser.getUserByEmail(data.email);
 
     if (user) {
       return { error: "User already exists" };
@@ -41,7 +43,7 @@ export const registerAction = async (values: z.infer<typeof signupSchema>) => {
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     // crear el usuario en la base de datos
-    const newUser = await createUser({
+    const newUser = await ouser.createUser({
       email: data.email,
       password: hashedPassword,
       role_id: "2",

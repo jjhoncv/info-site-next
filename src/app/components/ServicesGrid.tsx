@@ -8,20 +8,22 @@ export default function ServicesGrid({ services }: { services: Service[] }) {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20">
           {services.map((service, index) => (
-            <div key={index} className="text-center">
-              <div className="mb-4 flex justify-center">
-                <div className="relative w-16 h-16">
-                  <Image
-                    src={service.image_url}
-                    alt={service.title}
-                    layout="fill"
-                    className="text-blue-500"
-                  />
+            <Link href={`/services/${service.slug}`}>
+              <div key={index} className="text-center">
+                <div className="mb-4 flex justify-center">
+                  <div className="relative w-16 h-16">
+                    <Image
+                      src={service.image_url}
+                      alt={service.title}
+                      layout="fill"
+                      className="text-blue-500"
+                    />
+                  </div>
                 </div>
+                <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
+                <p className="text-gray-600 text-sm">{service.description}</p>
               </div>
-              <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-              <p className="text-gray-600 text-sm">{service.description}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

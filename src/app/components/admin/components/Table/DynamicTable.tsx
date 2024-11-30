@@ -36,6 +36,7 @@ export interface TableColumn {
   priority?: Priority;
   sortable?: boolean;
   searchable?: boolean;
+  imageField?: boolean;
 }
 
 export interface TableActions {
@@ -63,6 +64,7 @@ export interface DynamicTableProps {
   enableReorder?: boolean;
   pageSize?: number;
   pageSizeOptions?: number[];
+  renderActions?: (id: string) => React.ReactNode;
 }
 
 export const DynamicTable: FC<DynamicTableProps> = ({
@@ -85,6 +87,7 @@ export const DynamicTable: FC<DynamicTableProps> = ({
   enableReorder = true,
   pageSize: initialPageSize = 10,
   pageSizeOptions = [5, 10, 20, 50],
+  renderActions: renderActionsProps,
 }) => {
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -192,10 +195,8 @@ export const DynamicTable: FC<DynamicTableProps> = ({
             href={`${baseUrl}/${itemId}`}
             className="hover:text-blue-600 transition-colors hover:bg-slate-300/50 p-2 rounded-full"
             onClick={(e) => {
-              if (onEdit) {
-                e.preventDefault();
-                onEdit(itemId);
-              }
+              e.preventDefault();
+              onEdit?.(itemId);
             }}
           >
             <PencilIcon size={16} />
@@ -203,7 +204,10 @@ export const DynamicTable: FC<DynamicTableProps> = ({
         )}
         {actions.delete && (
           <button
-            onClick={() => onDelete?.(itemId)}
+            onClick={(e) => {
+              e.preventDefault();
+              onDelete?.(itemId);
+            }}
             className="hover:text-red-600 transition-colors hover:bg-slate-300/50 p-2 rounded-full"
           >
             <TrashIcon size={16} />
@@ -318,14 +322,18 @@ export const DynamicTable: FC<DynamicTableProps> = ({
                                   outlineColor: "#ffffff26",
                                 }}
                                 key={`${item.id}-${column.key}`}
-                                className={`px-3 inset-0 outline text-nowrap overflow-hidden overflow-ellipsis ${
+                                className={`px-3 inset-0 outline ${
+                                  column.imageField
+                                    ? ``
+                                    : `text-nowrap overflow-hidden overflow-ellipsis`
+                                }  ${
                                   column.width || "flex-1"
                                 } ${cellClassName}`}
                               >
                                 {renderCell(item, column)}
                               </td>
                             ))}
-                            {(actions.edit || actions.delete) && (
+                            {renderActionsProps && (
                               <td
                                 style={{
                                   outlineStyle: "inset",
@@ -333,7 +341,7 @@ export const DynamicTable: FC<DynamicTableProps> = ({
                                 }}
                                 className="p-2 w-[100px] px-3 inset-0 outline"
                               >
-                                {renderActions(item.id)}
+                                {renderActionsProps(item.id)}
                               </td>
                             )}
                           </tr>
@@ -406,8 +414,8 @@ export const DynamicTable: FC<DynamicTableProps> = ({
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
-                              {(actions.edit || actions.delete) &&
-                                renderActions(item.id)}
+                              {renderActionsProps &&
+                                renderActionsProps(item.id)}
                               <button
                                 onClick={() => toggleRow(item.id)}
                                 className="p-1"

@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { Field } from "./types/fileManagement";
 
 export const mergeFieldsWithData = (fields: Field[], data: any): Field[] => {
@@ -11,10 +10,13 @@ export const mergeFieldsWithData = (fields: Field[], data: any): Field[] => {
       // Asignar el valor según el tipo de campo
       if (field.type === "file") {
         // Para campos de tipo file, asignar la URL de la imagen
-        if (_.isArray(data[field.key])) {
-          updatedField.value = data[field.key];
-        } else {
-          updatedField.value = [data[field.key]];
+
+        if (data[field.key] !== "") {
+          if (Array.isArray(data[field.key])) {
+            updatedField.value = data[field.key];
+          } else {
+            updatedField.value = [data[field.key]];
+          }
         }
       } else {
         // Para otros tipos de campos, asignar el valor directamente

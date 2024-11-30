@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { Alert } from "../Alert/Alert";
 import { DynamicTable, TableColumn } from "../Table/DynamicTable";
+import { EditAction, RemoveAction } from "../Table/Actions";
 
 interface UserListViewProps {
   users: User[];
@@ -85,12 +86,13 @@ export const UserListView: FC<UserListViewProps> = ({ users }) => {
         columns={columns}
         data={users}
         baseUrl="/dashboard/users"
-        actions={{
-          edit: true,
-          delete: true,
-        }}
-        onDelete={(id: string) => {
-          router.replace("/dashboard/users?action=alert&id=" + id);
+        renderActions={(id: string) => {
+          return (
+            <div className="flex gap-2 items-center justify-center">
+              <EditAction id={id} baseURL="/dashboard/users" />
+              <RemoveAction id={id} baseURL="/dashboard/users" />
+            </div>
+          );
         }}
         enableSearch
         enablePagination

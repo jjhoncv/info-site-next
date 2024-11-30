@@ -13,7 +13,7 @@ export const createDynamicSchema = (fields: Field[]) => {
       case "file":
         fieldSchema = schemaImageValidation({
           ...field.options,
-          multiple: field.multiple ?? false,
+          multiple: field.multiple,
         });
         break;
 

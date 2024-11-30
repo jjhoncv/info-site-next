@@ -4,9 +4,7 @@ import { mergeFieldsWithData } from "@/app/components/admin/components/FormCreat
 import { PageUI } from "@/app/components/admin/components/Page/Page";
 import { PageTitle } from "@/app/components/admin/components/Page/PageTitle";
 
-import { Banner } from "@/interfaces";
-import { toClient } from "@/lib/utils";
-import { getBannerById } from "@/models/banner";
+import { getBanner } from "@/services/bannerService";
 
 export const revalidate = 0; // Deshabilitar cache estático
 
@@ -17,11 +15,10 @@ export default async function UserEditPage({
 }) {
   const { id } = params;
 
-  const [banner] = (await Promise.all([
-    getBannerById(id).then(toClient),
-  ])) as Banner[];
-
+  const banner = await getBanner(id);
   const fieldsWithValues = mergeFieldsWithData(BannerFields, banner);
+
+  if (!banner) return <div>No se encontraron banner</div>;
 
   return (
     <PageUI
@@ -33,8 +30,13 @@ export default async function UserEditPage({
       subtitle="Editar Banner"
     >
       <FormCreate
+        type="edit"
         api={{ url: "/api/admin/banners", method: "PATCH", withFiles: true }}
-        form={{ redirect: "/dashboard/banners", fields: fieldsWithValues, id }}
+        form={{
+          redirect: "/dashboard/banners",
+          fields: fieldsWithValues,
+          customFields: { id },
+        }}
       />
     </PageUI>
   );

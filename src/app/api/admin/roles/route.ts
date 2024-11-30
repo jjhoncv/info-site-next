@@ -1,6 +1,7 @@
 import { RoleName } from "@/interfaces";
-import { createRole, removeRole, updateRole } from "@/models/role";
-import { getSection, removeAllSectionByRole } from "@/models/sections";
+import { RoleModel } from "@/models/RoleModel";
+import { SectionModel } from "@/models/SectionModel";
+
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(req: NextRequest) {
@@ -16,11 +17,16 @@ export async function PUT(req: NextRequest) {
       );
     }
 
+    const osection = new SectionModel();
+    const orole = new RoleModel();
+
     const sections = await Promise.all(
-      sections_ids.map(async (section_id: any) => await getSection(section_id))
+      sections_ids.map(
+        async (section_id: any) => await osection.getSection(section_id)
+      )
     );
 
-    const role = await createRole(
+    const role = await orole.createRole(
       {
         name: name as RoleName,
       },
@@ -56,7 +62,8 @@ export async function PATCH(req: NextRequest) {
     }
 
     try {
-      const user = await updateRole({ name }, sections, id);
+      const orole = new RoleModel();
+      const user = await orole.updateRole({ name }, sections, id);
 
       const response = NextResponse.json(
         {
@@ -98,8 +105,11 @@ export async function DELETE(req: NextRequest) {
     }
 
     try {
-      await removeRole(role_id);
-      await removeAllSectionByRole({ roleId: role_id });
+      const orole = new RoleModel();
+      const osection = new SectionModel();
+
+      await orole.deleteRole(role_id);
+      await osection.removeAllSectionByRole(role_id);
 
       const response = NextResponse.json(
         {

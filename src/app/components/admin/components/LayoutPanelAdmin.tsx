@@ -19,8 +19,8 @@ export const LayoutPanelAdmin: FC<LayoutPanelAdminProps> = ({
   return (
     <>
       <AdminSidebar user={user} open={!open} />
-      <main className="flex-1 overflow-x-hidden overflow-y-auto ">
-        <div className="w-full md:p-10 p-5 pt-5">
+      <main className="flex-1 overflow-x-hidden overflow-y-auto  ">
+        <div className="w-full md:p-14 p-5 pt-5">
           <div className="flex items-center justify-between relative mb-5">
             <div className="justify-start flex">
               <div className="flex md:hidden">

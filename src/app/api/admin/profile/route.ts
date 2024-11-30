@@ -1,4 +1,4 @@
-import { updateUser } from "@/models/user";
+import { UserModel } from "@/models/UserModel";
 import bcrypt from "bcryptjs";
 import { writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
@@ -40,7 +40,8 @@ export async function POST(req: NextRequest) {
     const fileUrl = `/uploads/${uniqueFileName}`;
 
     try {
-      const user = await updateUser({ photo: fileUrl }, id);
+      const ouser = new UserModel();
+      const user = await ouser.updateUser({ photo: fileUrl }, id);
       const response = NextResponse.json(
         {
           message: "Foto de perfil actualizada",
@@ -114,7 +115,8 @@ export async function PATCH(req: NextRequest) {
     }
 
     try {
-      const user = await updateUser(objUser, id);
+      const ouser = new UserModel();
+      const user = await ouser.updateUser(objUser, id);
 
       const response = NextResponse.json(
         {

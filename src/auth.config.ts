@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { loginSchema } from "./lib/zod";
-import { getUserByEmail } from "./models/user";
+import { UserModel } from "./models/UserModel";
 
 export default {
   providers: [
@@ -13,9 +13,9 @@ export default {
         if (!success) {
           throw new Error("Invalid credentials");
         }
-
+        const ouser = new UserModel();
         // verficar si el usuario existe en la base de datos
-        const user = await getUserByEmail(data.email);
+        const user = await ouser.getUserByEmail(data.email);
 
         if (!user || !user.password) {
           throw new Error("Invalid credentials");

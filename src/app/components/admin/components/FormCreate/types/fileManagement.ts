@@ -23,10 +23,12 @@ export interface FieldBasic {
 export interface FileOptions {
   acceptImageTypes: string[] | undefined;
   maxFileSize: number | undefined;
-  dimensions?: {
-    min: { width: number; height: number };
-    max: { width: number; height: number };
-  };
+  dimensions?:
+    | {
+        min: { width: number; height: number };
+        max: { width: number; height: number };
+      }
+    | undefined;
 }
 
 export type FieldType = "primary" | "text" | "textarea" | "file";

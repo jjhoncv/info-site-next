@@ -1,4 +1,3 @@
-import { BannerFields } from "@/app/components/admin/components/Banners/bannerFields";
 import { FormCreate } from "@/app/components/admin/components/FormCreate/FormCreate";
 import { PageUI } from "@/app/components/admin/components/Page/Page";
 import { PageTitle } from "@/app/components/admin/components/Page/PageTitle";

@@ -44,7 +44,7 @@ export const DropdownProfile: FC<DropdownProfileProps> = ({ user }) => {
     [
       {
         label: "Logout",
-        onClick: () => signOut({ callbackUrl: "/login" }),
+        onClick: () => signOut({ callbackUrl: "/admin/login" }),
       },
     ],
   ];

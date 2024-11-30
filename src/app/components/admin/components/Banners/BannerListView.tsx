@@ -8,6 +8,7 @@ import { FC } from "react";
 import { Alert } from "../Alert/Alert";
 import { PreviewImageList } from "../PreviewImageList";
 import { DynamicTable, TableColumn } from "../Table/DynamicTable";
+import { EditAction, RemoveAction } from "../Table/Actions";
 
 interface BannerListViewProps {
   banners: Banner[];
@@ -92,12 +93,13 @@ export const BannerListView: FC<BannerListViewProps> = ({ banners }) => {
         columns={columns}
         data={banners}
         baseUrl="/dashboard/banners"
-        actions={{
-          edit: true,
-          delete: true,
-        }}
-        onDelete={(id: string) => {
-          router.replace("/dashboard/banners?action=alert&id=" + id);
+        renderActions={(id: string) => {
+          return (
+            <div className="flex gap-2 items-center justify-center">
+              <EditAction id={id} baseURL="/dashboard/banners" />
+              <RemoveAction id={id} baseURL="/dashboard/banners" />
+            </div>
+          );
         }}
         enableSearch
         enablePagination
@@ -106,9 +108,6 @@ export const BannerListView: FC<BannerListViewProps> = ({ banners }) => {
         pageSize={10}
         pageSizeOptions={[5, 10, 20, 50]}
         onReorder={handleReorder}
-        onEdit={(id) => {
-          router.replace("/dashboard/banners/" + id);
-        }}
       />
     </>
   );

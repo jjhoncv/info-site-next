@@ -1,6 +1,7 @@
 "use client";
 import { FetchCustomBody } from "@/lib/FetchCustomBody";
 import { handleKeyDown } from "@/lib/form";
+import { isImageFile } from "@/lib/isImageFile";
 import { ToastFail, ToastSuccess } from "@/lib/splash";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ImageIcon } from "lucide-react";
@@ -12,13 +13,14 @@ import { Button } from "../Form/Input/Button";
 import { Input } from "../Form/Input/Input";
 import { createDynamicSchema } from "./createDynamicSchema";
 import { DialogAssets } from "./DialogAssets";
+import { extractDefaultValues } from "./extractDefaultValues";
 import { SliderImages } from "./SliderImages";
-import { isImageFile } from "@/lib/isImageFile";
 import { Field } from "./types/fileManagement";
 
 // Types
 
 interface FormCreateProps {
+  type?: "new" | "edit";
   api: {
     url: string;
     method: "PUT" | "PATCH" | "POST" | "DELETE";
@@ -27,22 +29,14 @@ interface FormCreateProps {
   form: {
     redirect: string;
     fields: Field[];
-    id?: string;
+    customFields?: object;
   };
 }
 
-const extractDefaultValues = (fields: Field[]): Record<string, any> => {
-  return fields.reduce((acc, field) => {
-    if ("value" in field && field.value !== undefined) {
-      acc[field.key] = field.value;
-    }
-    return acc;
-  }, {} as Record<string, any>);
-};
-
 export const FormCreate: FC<FormCreateProps> = ({
+  type = "new",
   api,
-  form: { redirect, fields: initialFields, id },
+  form: { redirect, fields: initialFields, customFields },
 }) => {
   const router = useRouter();
   const [fields, setFields] = useState<Field[]>(initialFields);
@@ -119,9 +113,11 @@ export const FormCreate: FC<FormCreateProps> = ({
         }
       });
 
-      // Agregar ID si existe
-      if (id) {
-        formData.append("id", id);
+      // Agregar customFields si existe
+      if (customFields) {
+        Object.entries(customFields).forEach(([key, value]) => {
+          formData.append(key, value.toString());
+        });
       }
 
       const message = await FetchCustomBody({
@@ -154,11 +150,11 @@ export const FormCreate: FC<FormCreateProps> = ({
       case "file":
         return (
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-bold pl-1">{field.label}</label>
+            <label className="text-sm text-slate-250">{field.label}</label>
             {field.value &&
             Array.isArray(field.value) &&
             field.value.length > 0 ? (
-              <div className="bg-slate-100 w-full flex border items-center rounded px-3 py-2 min-h-[240px]">
+              <div className="bg-slate-100 w-full flex border border-gray-300 items-center rounded px-3 py-2 min-h-[240px]">
                 <div className="w-full h-full max-h-[240px]">
                   {field.value.every(isImageFile) ? (
                     <SliderImages
@@ -177,7 +173,7 @@ export const FormCreate: FC<FormCreateProps> = ({
             ) : (
               <div
                 onClick={() => handleFileSelect(field)}
-                className="bg-slate-100 w-full flex border items-center rounded px-3 py-2 min-h-[240px] cursor-pointer hover:bg-slate-200 transition-colors"
+                className="bg-slate-100 w-full flex border border-gray-300 items-center rounded px-3 py-2 min-h-[240px] cursor-pointer hover:bg-slate-200 transition-colors"
               >
                 <div className="gap-2 items-center w-full justify-center flex-col flex">
                   <ImageIcon size={30} className="text-gray-400" />
@@ -196,7 +192,7 @@ export const FormCreate: FC<FormCreateProps> = ({
   };
 
   return (
-    <CardContent>
+    <>
       {dialogState.isOpen && dialogState.selectedField && (
         <DialogAssets
           open={dialogState.isOpen}
@@ -209,26 +205,59 @@ export const FormCreate: FC<FormCreateProps> = ({
       )}
 
       <form onSubmit={handleSubmit(onSubmit as any)} noValidate>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {fields.map((field, index) => (
-            <div
-              key={`${field.key}-${index}`}
-              className="flex flex-col gap-1 mb-4"
-            >
-              {renderField(field)}
+        <div className="flex flex-col gap-4 2xl:gap-6 xl:flex-row w-full">
+          <CardContent className="w-full xl:w-3/4 md:!mb-0">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {fields.map((field, index) => (
+                <div
+                  key={`${field.key}-${index}`}
+                  className="flex flex-col gap-1 mb-4"
+                >
+                  {renderField(field)}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </CardContent>
+          <CardContent className="w-full xl:w-1/4 md:!mb-0 md:!mt-0 xl:!mt-7">
+            <div className="border-b">
+              <p className="font-semibold text-xs pb-2 uppercase">
+                Información
+              </p>
+            </div>
 
+            <ul className="my-5  text-sm gap-2 flex flex-col">
+              <ul>
+                <li className="flex w-full justify-between">
+                  <p className="font-semibold">Create</p>
+                  <div>23/07/2042</div>
+                </li>
+                <li className="flex w-full justify-between">
+                  <p className="font-semibold">By</p>
+                  <div>Jhonnatan Castro</div>
+                </li>
+              </ul>
+              <ul>
+                <li className="flex w-full justify-between">
+                  <p className="font-semibold">Last update</p>
+                  <div>14/08/2025</div>
+                </li>
+                <li className="flex w-full justify-between">
+                  <p className="font-semibold">By</p>
+                  <div>Renzo Larrea</div>
+                </li>
+              </ul>
+            </ul>
+          </CardContent>
+        </div>
         <div className="flex gap-3 justify-end mt-8">
           <Button type="cancel" href={redirect} disabled={isSubmitting}>
             Cancelar
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {id ? "Guardar cambios" : "Añadir"}
+            {type === "edit" ? "Guardar cambios" : "Añadir"}
           </Button>
         </div>
       </form>
-    </CardContent>
+    </>
   );
 };

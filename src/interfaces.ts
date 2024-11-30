@@ -32,7 +32,7 @@ export interface ServiceImage {
   created_at: Date;
   updated_at: Date;
   display_order: number;
-  id_service: number;
+  id_service: string;
   image_url: string;
 }
 

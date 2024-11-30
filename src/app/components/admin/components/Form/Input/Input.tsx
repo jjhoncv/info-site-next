@@ -67,7 +67,8 @@ export const Input = forwardRef<
     },
     ref
   ) => {
-    const baseClassName = "bg-slate-100 w-full border rounded px-3 py-2";
+    const baseClassName =
+      "bg-white w-full border border-gray-300 rounded px-3 py-2";
     const errorClassName = error
       ? "border-red-500"
       : "border-gray-200 hover:border-gray-300";
@@ -81,7 +82,7 @@ export const Input = forwardRef<
         props as React.TextareaHTMLAttributes<HTMLTextAreaElement>;
       return (
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-bold pl-1">{label}</label>
+          <label className="text-sm text-slate-250">{label}</label>
           <textarea
             ref={ref as React.Ref<HTMLTextAreaElement>}
             className={inputClassName}
@@ -147,7 +148,7 @@ export const Input = forwardRef<
       props as React.InputHTMLAttributes<HTMLInputElement>;
     return (
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-bold pl-1">{label}</label>
+        <label className="text-sm text-slate-250">{label}</label>
         <input
           type={type}
           ref={ref as React.Ref<HTMLInputElement>}

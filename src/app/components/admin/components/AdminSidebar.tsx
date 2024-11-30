@@ -20,7 +20,7 @@ interface MenuItem {
 
 export const MenuItems = (items: Section[]) => {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(items.some((item) => item.url === pathname));
 
   return (
     <>

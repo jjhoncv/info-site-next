@@ -1,14 +1,10 @@
-import { BannerFields } from "@/app/components/admin/components/Banners/bannerFields";
 import { FormCreate } from "@/app/components/admin/components/FormCreate/FormCreate";
 import { mergeFieldsWithData } from "@/app/components/admin/components/FormCreate/mergeFieldsWithData";
 import { PageUI } from "@/app/components/admin/components/Page/Page";
 import { PageTitle } from "@/app/components/admin/components/Page/PageTitle";
 import { ServiceFields } from "@/app/components/admin/components/Services/serviceFields";
 
-import { Banner, Service } from "@/interfaces";
-import { toClient } from "@/lib/utils";
-import { getBannerById } from "@/models/banner";
-import { getServiceById } from "@/services/serviceService";
+import { getService } from "@/services/serviceService";
 
 export const revalidate = 0; // Deshabilitar cache estático
 
@@ -19,24 +15,27 @@ export default async function ServiceEditPage({
 }) {
   const { id } = params;
 
-  const [service] = (await Promise.all([
-    getServiceById(id).then(toClient),
-  ])) as Service[];
+  const service = await getService(id);
+  if (!service) return <div>No se encontraro service</div>;
 
   const fieldsWithValues = mergeFieldsWithData(ServiceFields, service);
 
   return (
     <PageUI
-      title={<PageTitle title="Editar Service" />}
+      title={<PageTitle title="Editar Servicie" />}
       breadcrumb={[
-        { label: "Service", url: "/dashboard/services" },
-        { label: "Editar Service" },
+        { label: "Servicie", url: "/dashboard/services" },
+        { label: "Editar Servicie" },
       ]}
-      subtitle="Editar Service"
+      subtitle="Editar Servicie"
     >
       <FormCreate
         api={{ url: "/api/admin/services", method: "PATCH", withFiles: true }}
-        form={{ redirect: "/dashboard/services", fields: fieldsWithValues, id }}
+        form={{
+          redirect: "/dashboard/services",
+          fields: fieldsWithValues,
+          customFields: { id },
+        }}
       />
     </PageUI>
   );

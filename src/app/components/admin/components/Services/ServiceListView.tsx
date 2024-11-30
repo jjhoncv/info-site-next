@@ -7,6 +7,9 @@ import { FC } from "react";
 import { Alert } from "../Alert/Alert";
 import { PreviewImageList } from "../PreviewImageList";
 import { DynamicTable, TableColumn } from "../Table/DynamicTable";
+import Link from "next/link";
+import { PencilIcon, TrashIcon } from "lucide-react";
+import { EditAction, GalleryAction, RemoveAction } from "../Table/Actions";
 
 interface ServiceListViewProps {
   services: Service[];
@@ -93,12 +96,14 @@ export const ServiceListView: FC<ServiceListViewProps> = ({ services }) => {
         columns={columns}
         data={services}
         baseUrl="/dashboard/services"
-        actions={{
-          edit: true,
-          delete: true,
-        }}
-        onDelete={(id: string) => {
-          router.replace("/dashboard/services?action=alert&id=" + id);
+        renderActions={(id: string) => {
+          return (
+            <div className="flex gap-2 items-center justify-center">
+              <EditAction id={id} baseURL="/dashboard/services" />
+              <RemoveAction id={id} baseURL="/dashboard/services" />
+              <GalleryAction id={id} baseURL="/dashboard/services" />
+            </div>
+          );
         }}
         cellClassName="max-w-[200px]"
         enableSearch
@@ -108,9 +113,6 @@ export const ServiceListView: FC<ServiceListViewProps> = ({ services }) => {
         pageSize={10}
         pageSizeOptions={[5, 10, 20, 50]}
         onReorder={handleReorder}
-        onEdit={(id) => {
-          router.replace("/dashboard/services/" + id);
-        }}
       />
     </>
   );

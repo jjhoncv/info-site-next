@@ -1,18 +1,11 @@
-import { userCreateFormData } from "@/app/components/Users/UserNewView";
-import { createUser, removeUser, updateUser } from "@/models/user";
+import { UserModel } from "@/models/UserModel";
 import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const {
-      username,
-      email,
-      lastname,
-      password,
-      roles: role_id,
-    }: userCreateFormData = body;
+    const { username, email, lastname, password, roles: role_id } = body;
 
     // Validar los datos de entrada
     if (!username || !email || !password || !lastname) {
@@ -27,7 +20,8 @@ export async function PUT(req: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     try {
-      const user = await createUser({
+      const ouser = new UserModel();
+      const user = await ouser.createUser({
         email,
         is_active: true,
         password: hashedPassword,
@@ -101,7 +95,8 @@ export async function PATCH(req: NextRequest) {
     }
 
     try {
-      const user = await updateUser(objUser, id);
+      const ouser = new UserModel();
+      const user = await ouser.updateUser(objUser, id);
 
       const response = NextResponse.json(
         {
@@ -143,7 +138,8 @@ export async function DELETE(req: NextRequest) {
     }
 
     try {
-      await removeUser(user_id);
+      const ouser = new UserModel();
+      await ouser.deleteUser(user_id);
 
       const response = NextResponse.json(
         {

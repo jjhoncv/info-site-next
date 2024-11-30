@@ -15,11 +15,11 @@ export async function findAllPages(): Promise<Page[]> {
 
 export async function findPageById(id: number): Promise<Page | null> {
   try {
-    const result = await executeQuery<Page[]>({
+    const [result] = await executeQuery<Page[]>({
       query: "SELECT * FROM pages WHERE id = ?",
       values: [id],
     });
-    return result[0] || null;
+    return result || null;
   } catch (error) {
     console.error(`Error al obtener la página con id ${id}:`, error);
     throw error;

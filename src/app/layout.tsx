@@ -1,9 +1,4 @@
-// app/layout.tsx
-// import Layout from "./components/Layout";
-
 import "./globals.css";
-
-import { getAllServices } from "@/services/serviceService";
 
 export const metadata = {
   title: "Mi Sitio Web Informativo",

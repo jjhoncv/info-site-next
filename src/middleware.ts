@@ -1,45 +1,57 @@
 import NextAuth from "next-auth";
 import authConfig from "@/auth.config";
 import { NextResponse } from "next/server";
-import { getSession } from "next-auth/react";
 import { auth } from "./auth";
 
 const { auth: middleware } = NextAuth(authConfig);
 
-const publicRoutes = ["/", "/prices"];
-const authRoutes = ["/admin/login", "/admin/register"];
 const apiAuthPrefix = "/api/auth";
+const dashboardPrefix = "/dashboard";
+const loginPath = "/admin/login";
 
 export default middleware(async (req) => {
   const { nextUrl, auth: auth2 } = req;
   const isLoggedIn = !!auth2?.user;
-
-  const session = await auth();
-
-  // console.log(session);
+  const pathname = nextUrl.pathname;
 
   // Permitir todas las rutas de API de autenticación
-  if (nextUrl.pathname.startsWith(apiAuthPrefix)) {
+  if (pathname.startsWith(apiAuthPrefix)) {
     return NextResponse.next();
   }
 
-  // Permitir acceso a rutas públicas sin importar el estado de autenticación
-  if (publicRoutes.includes(nextUrl.pathname)) {
+  // Si no es una ruta del dashboard ni login, permitir acceso
+  if (!pathname.startsWith(dashboardPrefix) && pathname !== loginPath) {
     return NextResponse.next();
   }
 
-  // Redirigir a /dashboard si el usuario está logueado y trata de acceder a rutas de autenticación
-  if (isLoggedIn && authRoutes.includes(nextUrl.pathname)) {
+  // Si está logueado y está en login, redirigir a dashboard
+  if (isLoggedIn && pathname === loginPath) {
     return NextResponse.redirect(new URL("/dashboard", nextUrl));
   }
 
-  // Redirigir a /admin/login si el usuario no está logueado y trata de acceder a una ruta protegida
-  if (
-    !isLoggedIn &&
-    !authRoutes.includes(nextUrl.pathname) &&
-    !publicRoutes.includes(nextUrl.pathname)
-  ) {
-    return NextResponse.redirect(new URL("/admin/login", nextUrl));
+  // Si no está logueado y trata de acceder al dashboard
+  if (!isLoggedIn && pathname.startsWith(dashboardPrefix)) {
+    return NextResponse.redirect(new URL(loginPath, nextUrl));
+  }
+
+  // Si está logueado y accede al dashboard, verificar permisos
+  if (isLoggedIn && pathname.startsWith(dashboardPrefix)) {
+    const session = await auth();
+    const userSections = session?.user.data.role.sections || [];
+
+    // Si es la ruta principal del dashboard o unauthorized, permitir acceso
+    if (pathname === "/dashboard" || pathname === "/dashboard/unauthorized") {
+      return NextResponse.next();
+    }
+
+    // Verificar permisos de sección
+    const hasPermission = userSections.some((section) =>
+      pathname.startsWith(section.url)
+    );
+
+    if (!hasPermission) {
+      return NextResponse.redirect(new URL("/dashboard/unauthorized", nextUrl));
+    }
   }
 
   return NextResponse.next();

@@ -4,8 +4,7 @@ import { PageButton } from "@/app/components/admin/components/Page/PageButton";
 import { PageTitle } from "@/app/components/admin/components/Page/PageTitle";
 import { RoleName } from "@/interfaces";
 import { hasPermission } from "@/lib/hasPermission";
-import { toClient } from "@/lib/utils";
-import { getBanners } from "@/models/banner";
+import { getBanners } from "@/services/bannerService";
 import { Suspense } from "react";
 
 function LoadingTable() {
@@ -13,14 +12,8 @@ function LoadingTable() {
 }
 
 export default async function BannerListPage() {
-  const permission = await hasPermission(RoleName.SUPERADMIN);
-
-  const [banners] = await Promise.all([getBanners().then(toClient)]);
+  const banners = await getBanners();
   if (!banners) return <div>No se encontraron banners</div>;
-
-  if (!permission) {
-    return <div>Unauthorized</div>;
-  }
 
   return (
     <PageUI
