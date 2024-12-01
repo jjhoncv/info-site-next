@@ -2,6 +2,11 @@ import { Service } from "@/interfaces";
 import { parseJSON } from "@/lib/utils";
 import { ServiceModel } from "../models/ServiceModel";
 
+export async function searchServices(q: string): Promise<Service[]> {
+  const service = new ServiceModel();
+  return parseJSON(await service.searchServices(q));
+}
+
 export async function getServices(): Promise<Service[]> {
   const service = new ServiceModel();
   return parseJSON(await service.getServices());

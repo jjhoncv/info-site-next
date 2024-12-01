@@ -15,6 +15,22 @@ export class ServiceModel {
     }
   }
 
+  // Metodo para buscar servicios
+  public async searchServices(q?: string): Promise<Service[]> {
+    try {
+      const result = await executeQuery<Service[]>({
+        query:
+          "SELECT * FROM services WHERE title LIKE ? OR subtitle LIKE ? OR slug LIKE ? OR description LIKE ? ORDER BY display_order ASC",
+        values: [`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`],
+      });
+
+      return result;
+    } catch (error) {
+      console.error("Error al obtener los services:", error);
+      throw error;
+    }
+  }
+
   // Método para obtener un service por ID
   public async getService(id: string): Promise<Service | null> {
     try {

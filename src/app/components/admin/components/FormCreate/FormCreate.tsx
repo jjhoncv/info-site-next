@@ -148,13 +148,13 @@ export const FormCreate: FC<FormCreateProps> = ({
           />
         );
       case "file":
+        const existsFiles =
+          field.value && Array.isArray(field.value) && field.value.length > 0;
         return (
           <div className="flex flex-col gap-1">
             <label className="text-sm text-slate-250">{field.label}</label>
-            {field.value &&
-            Array.isArray(field.value) &&
-            field.value.length > 0 ? (
-              <div className="bg-slate-100 w-full flex border border-gray-300 items-center rounded px-3 py-2 min-h-[240px]">
+            <div className="bg-slate-100 w-full flex border border-gray-300 items-center rounded px-3 py-2 min-h-[240px]">
+              {existsFiles ? (
                 <div className="w-full h-full max-h-[240px]">
                   {field.value.every(isImageFile) ? (
                     <SliderImages
@@ -163,27 +163,27 @@ export const FormCreate: FC<FormCreateProps> = ({
                     />
                   ) : (
                     <ul>
-                      {field.value.map((file, index) => (
+                      {field.value.map((file: any, index: number) => (
                         <li key={index}>{file}</li>
                       ))}
                     </ul>
                   )}
                 </div>
-              </div>
-            ) : (
-              <div
-                onClick={() => handleFileSelect(field)}
-                className="bg-slate-100 w-full flex border border-gray-300 items-center rounded px-3 py-2 min-h-[240px] cursor-pointer hover:bg-slate-200 transition-colors"
-              >
-                <div className="gap-2 items-center w-full justify-center flex-col flex">
-                  <ImageIcon size={30} className="text-gray-400" />
-                  <p className="text-center text-gray-500">
-                    Click para añadir un archivo o arrasta y suelta un archivo
-                    en esta área
-                  </p>
+              ) : (
+                <div
+                  onClick={() => handleFileSelect(field)}
+                  className="cursor-pointer hover:bg-slate-200 transition-colors w-full h-full flex justify-center items-center"
+                >
+                  <div className="gap-2 items-center w-full justify-center flex-col flex">
+                    <ImageIcon size={30} className="text-gray-400" />
+                    <p className="text-center text-gray-500">
+                      Click para añadir un archivo o arrasta y suelta un archivo
+                      en esta área
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         );
       default:
@@ -211,7 +211,7 @@ export const FormCreate: FC<FormCreateProps> = ({
               {fields.map((field, index) => (
                 <div
                   key={`${field.key}-${index}`}
-                  className="flex flex-col gap-1 mb-4"
+                  className="flex flex-col gap-1"
                 >
                   {renderField(field)}
                 </div>
@@ -225,24 +225,24 @@ export const FormCreate: FC<FormCreateProps> = ({
               </p>
             </div>
 
-            <ul className="my-5  text-sm gap-2 flex flex-col">
+            <ul className="my-5 text-sm gap-4 flex flex-col font-light">
               <ul>
                 <li className="flex w-full justify-between">
-                  <p className="font-semibold">Create</p>
+                  <p className="text-slate-250">Create</p>
                   <div>23/07/2042</div>
                 </li>
                 <li className="flex w-full justify-between">
-                  <p className="font-semibold">By</p>
+                  <p className="text-slate-250">By</p>
                   <div>Jhonnatan Castro</div>
                 </li>
               </ul>
               <ul>
                 <li className="flex w-full justify-between">
-                  <p className="font-semibold">Last update</p>
+                  <p className="text-slate-250">Last update</p>
                   <div>14/08/2025</div>
                 </li>
                 <li className="flex w-full justify-between">
-                  <p className="font-semibold">By</p>
+                  <p className="text-slate-250">By</p>
                   <div>Renzo Larrea</div>
                 </li>
               </ul>

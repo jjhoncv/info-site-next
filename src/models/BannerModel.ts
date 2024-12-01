@@ -3,11 +3,28 @@ import { Banner } from "@/interfaces";
 
 export class BannerModel {
   // Método para obtener todos los banners
-  public async getBanners(): Promise<Banner[]> {
+  public async getBanners(q?: string): Promise<Banner[]> {
     try {
       const result = await executeQuery<Banner[]>({
         query: "SELECT * FROM banner ORDER BY display_order ASC",
       });
+
+      return result;
+    } catch (error) {
+      console.error("Error al obtener los banners:", error);
+      throw error;
+    }
+  }
+
+  // Metodo para buscar banners
+  public async searchBanners(q?: string): Promise<Banner[]> {
+    try {
+      const result = await executeQuery<Banner[]>({
+        query:
+          "SELECT * FROM banner WHERE title LIKE ? OR subtitle LIKE ? ORDER BY display_order ASC",
+        values: [`%${q}%`, `%${q}%`],
+      });
+
       return result;
     } catch (error) {
       console.error("Error al obtener los banners:", error);

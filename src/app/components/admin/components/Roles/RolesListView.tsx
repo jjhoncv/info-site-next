@@ -111,10 +111,10 @@ export const RolesListView: FC<RolesListViewProps> = ({ roles, sections }) => {
         baseUrl="/dashboard/roles"
         renderActions={(id: string) => {
           return (
-            <div className="flex gap-2 items-center justify-center">
+            <>
               <EditAction id={id} baseURL="/dashboard/roles" />
               <RemoveAction id={id} baseURL="/dashboard/roles" />
-            </div>
+            </>
           );
         }}
         rowMobileClassName="grid grid-cols-3 pt-1"

@@ -50,7 +50,7 @@ export const Alert: FC<AlertProps> = ({
               <hr />
               {message && (
                 <div className="p-6 min-h-[100px] flex">
-                  <div className="flex gap-3 items-center">
+                  <div className="flex flex-col justify-center w-full gap-3 items-center">
                     <AlertTriangle size={30} strokeWidth={0.9} />
                     <p>{message}</p>
                   </div>

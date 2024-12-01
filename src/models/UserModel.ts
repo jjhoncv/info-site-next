@@ -15,6 +15,20 @@ export class UserModel {
     return user;
   }
 
+  public async searchUsers(q: string): Promise<User[]> {
+    const users = await executeQuery<User[]>({
+      query:
+        "SELECT * FROM users WHERE username LIKE ? OR email LIKE ? OR lastname LIKE ?",
+      values: [`%${q}%`, `%${q}%`, `%${q}%`],
+    });
+
+    const usersWithData = (
+      await Promise.all(users.map((user) => this.getUser(user.id)))
+    ).filter(Boolean) as User[];
+
+    return usersWithData;
+  }
+
   public async getUsers(): Promise<User[]> {
     const users = await executeQuery<User[]>({
       query: "SELECT * FROM users",

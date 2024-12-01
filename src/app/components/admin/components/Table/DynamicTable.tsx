@@ -1,28 +1,26 @@
 "use client";
 import {
-  ArrowUpDown,
   ChevronLeft,
   ChevronRight,
   ChevronRightIcon,
   ChevronUp,
+  Ellipsis,
   GripVertical,
-  PencilIcon,
-  TrashIcon,
 } from "lucide-react";
-import Link from "next/link";
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useEffect, useRef, useState } from "react";
 
-import debounce from "lodash/debounce";
-import { StrictModeDroppable } from "../StrictModeDroppable";
-import { Input } from "../Form/Input/Input";
-import { Select } from "../Form/Input/Select";
-import { CardContent } from "../CardContent/CardContent";
 import {
   DragDropContext,
   Draggable,
   DroppableProvided,
   DropResult,
 } from "@hello-pangea/dnd";
+import { CardContent } from "../CardContent/CardContent";
+import { Input } from "../Form/Input/Input";
+import { Select } from "../Form/Input/Select";
+import { StrictModeDroppable } from "../StrictModeDroppable";
+import { PopupTableMenuAction } from "./PopupTableMenuAction";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export type ActionOption = "edit" | "delete";
 export type Priority = "high" | "medium" | "low";
@@ -48,9 +46,6 @@ export interface DynamicTableProps {
   columns: TableColumn[];
   data: Record<string, any>[];
   actions?: TableActions;
-  baseUrl: string;
-  onDelete?: (id: string) => void;
-  onEdit?: (id: string) => void;
   onReorder?: (reorderedItems: Record<string, any>[]) => void;
   containerClassName?: string;
   tableClassName?: string;
@@ -71,9 +66,6 @@ export const DynamicTable: FC<DynamicTableProps> = ({
   columns,
   data,
   actions = { edit: true, delete: true },
-  baseUrl,
-  onDelete,
-  onEdit,
   onReorder,
   containerClassName = "",
   tableClassName = "",
@@ -90,7 +82,6 @@ export const DynamicTable: FC<DynamicTableProps> = ({
   renderActions: renderActionsProps,
 }) => {
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [sortConfig, setSortConfig] = useState<{
@@ -98,35 +89,39 @@ export const DynamicTable: FC<DynamicTableProps> = ({
     direction: SortDirection;
   }>({ key: "", direction: null });
   const [filteredData, setFilteredData] = useState(data);
-  const [items, setItems] = useState(data);
+  const [term, setTerm] = useState<string>();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const inputRefSearch = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setFilteredData(data);
-    setItems(data);
   }, [data]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    const q = params.get("q");
+    if (q) {
+      setTerm(q);
+      setTimeout(() => {
+        if (inputRefSearch.current) {
+          inputRefSearch.current.focus();
+          inputRefSearch.current.selectionStart = q.length;
+          inputRefSearch.current.selectionEnd = q.length;
+        }
+      }, 500);
+    } else {
+      params.delete("q");
+      router.push(`${pathname}?${params.toString()}`);
+    }
+  }, []);
 
   const toggleRow = (id: string) => {
     setExpandedRows((prev) =>
       prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
     );
   };
-
-  // Búsqueda
-  const handleSearch = debounce((term: string) => {
-    setSearchTerm(term);
-    setCurrentPage(1);
-
-    const filtered = data.filter((item) =>
-      columns.some((column) => {
-        if (!column.searchable) return false;
-        const value = item[column.key];
-        if (!value) return false;
-        return value.toString().toLowerCase().includes(term.toLowerCase());
-      })
-    );
-
-    setFilteredData(filtered);
-  }, 300);
 
   // Ordenamiento
   const handleSort = (key: string) => {
@@ -184,36 +179,16 @@ export const DynamicTable: FC<DynamicTableProps> = ({
     if (column.render) {
       return column.render(item[column.key]);
     }
-    return item[column.key];
-  };
-
-  const renderActions = (itemId: string) => {
     return (
-      <div className="flex gap-2 items-center justify-center">
-        {actions.edit && (
-          <Link
-            href={`${baseUrl}/${itemId}`}
-            className="hover:text-blue-600 transition-colors hover:bg-slate-300/50 p-2 rounded-full"
-            onClick={(e) => {
-              e.preventDefault();
-              onEdit?.(itemId);
-            }}
-          >
-            <PencilIcon size={16} />
-          </Link>
-        )}
-        {actions.delete && (
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              onDelete?.(itemId);
-            }}
-            className="hover:text-red-600 transition-colors hover:bg-slate-300/50 p-2 rounded-full"
-          >
-            <TrashIcon size={16} />
-          </button>
-        )}
-      </div>
+      <span
+        className={`${
+          column.imageField
+            ? ``
+            : `text-nowrap block overflow-hidden overflow-ellipsis max-w-[300px]`
+        }`}
+      >
+        {item[column.key]}
+      </span>
     );
   };
 
@@ -230,34 +205,43 @@ export const DynamicTable: FC<DynamicTableProps> = ({
       {enableSearch && (
         <div className="flex  flex-col sm:flex-row gap-4 justify-between items-center">
           <div className="w-full sm:w-48">
-            <Input
-              placeholder="Buscar..."
-              onChange={(e) => handleSearch(e.target.value)}
-              className="bg-white"
-              type="search"
-            />
+            <form>
+              <Input
+                ref={inputRefSearch}
+                placeholder="Buscar..."
+                name="q"
+                className="bg-white"
+                type="search"
+                defaultValue={term}
+                onChange={(e) => setTerm(e.target.value)}
+              />
+            </form>
           </div>
         </div>
       )}
 
-      <CardContent className={"!p-2 !pb-0 !my-3"}>
+      <PopupTableMenuAction />
+
+      <CardContent
+        className={"!p-2 !my-3 !overflow-x-hidden !overflow-y-visible"}
+      >
         {/* Vista Desktop */}
-        <div className="hidden lg:block">
+        <div className="hidden lg:block over">
           <DragDropContext onDragEnd={handleDragEnd}>
             <StrictModeDroppable droppableId="table">
               {(provided: DroppableProvided) => (
                 <table
                   {...provided.droppableProps}
                   ref={provided.innerRef}
-                  className={`w-full min-w-[640px] ${tableClassName}`}
+                  className={`w-full ${tableClassName}`}
                 >
-                  <thead className="bg-slate-100">
-                    <tr className=" border-slate-100">
+                  <thead className="">
+                    <tr className=" ">
                       {enableReorder && <th className="w-8" />}
                       {columns.map((column) => (
                         <th
                           key={column.key}
-                          className={`px-4 text-left text-xs uppercase font-medium text-gray-600 ${
+                          className={`px-4 text-left text-xs uppercase py-2 font-medium text-gray-600 ${
                             column.width || "flex-1"
                           } ${headerClassName}`}
                         >
@@ -301,7 +285,7 @@ export const DynamicTable: FC<DynamicTableProps> = ({
                           <tr
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            className={`border-b last:border-b-0 border-slate-200 hover:bg-gray-50/50 transition-colors ${
+                            className={`border-t  ${
                               snapshot.isDragging
                                 ? "bg-blue-50 *:opacity-0"
                                 : "opacity-100"
@@ -317,33 +301,37 @@ export const DynamicTable: FC<DynamicTableProps> = ({
                             )}
                             {columns.map((column) => (
                               <td
-                                style={{
-                                  outlineStyle: "inset",
-                                  outlineColor: "#ffffff26",
-                                }}
                                 key={`${item.id}-${column.key}`}
-                                className={`px-3 inset-0 outline ${
-                                  column.imageField
-                                    ? ``
-                                    : `text-nowrap overflow-hidden overflow-ellipsis`
-                                }  ${
+                                className={`px-3 py-4 text-sm text-slate-250 font-light   ${
                                   column.width || "flex-1"
                                 } ${cellClassName}`}
                               >
                                 {renderCell(item, column)}
                               </td>
                             ))}
-                            {renderActionsProps && (
-                              <td
-                                style={{
-                                  outlineStyle: "inset",
-                                  outlineColor: "#ffffff26",
+                            <td className="p-2 px-3 py-4 relative flex justify-center">
+                              <button
+                                onClick={(e) => {
+                                  document.dispatchEvent(
+                                    new CustomEvent("sendPopupEvent", {
+                                      detail: {
+                                        item,
+                                        target: e.currentTarget,
+                                        render: renderActionsProps,
+                                      },
+                                    })
+                                  );
                                 }}
-                                className="p-2 w-[100px] px-3 inset-0 outline"
+                                className="hover:bg-gray-100 cursor-pointer px-2 rounded py-2 flex justify-center items-center"
                               >
+                                <Ellipsis size={18} strokeWidth={1} />
+                              </button>
+                            </td>
+                            {/* {renderActionsProps && (
+                              <td className="p-2  px-3 py-4">
                                 {renderActionsProps(item.id)}
                               </td>
-                            )}
+                            )} */}
                           </tr>
                         )}
                       </Draggable>

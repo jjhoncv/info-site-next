@@ -4,7 +4,7 @@ import { LayoutGrid, icons, Archive } from "lucide-react";
 import Link from "next/link";
 
 const Icon = ({ name, ...nextProps }: any) => {
-  const LucideIcon = icons[name];
+  const LucideIcon = icons[name as keyof typeof icons];
   return LucideIcon ? (
     <LucideIcon {...nextProps} />
   ) : (
@@ -33,10 +33,7 @@ export default async function DashboardPage() {
               <CardContent
                 className={`h-full md:h-fit gap-2 flex flex-col items-center border-transparent hover:bg-slate-200 capitalize justify-center transition-colors`}
               >
-                {/* <Archive size={40} strokeWidth={0.9} />
-                 */}
                 <Icon name={section.image} size={40} strokeWidth={0.9} />
-
                 {section.name}
               </CardContent>
             </Link>

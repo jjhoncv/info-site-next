@@ -34,7 +34,7 @@ export const ServiceFields: Field[] = [
     key: "image_url",
     label: "imagen",
     type: "file",
-    multiple: false,
+    multiple: true,
     options: {
       maxFileSize: 0.5 * 1024 * 1024, // 500KB
       dimensions: {

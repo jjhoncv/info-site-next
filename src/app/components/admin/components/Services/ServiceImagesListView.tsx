@@ -94,7 +94,7 @@ export const ServiceImagesListView: FC<ServiceImagesListViewProps> = ({
         baseUrl="/dashboard/services"
         renderActions={(id: string) => {
           return (
-            <div className="flex gap-2 items-center justify-center">
+            <>
               <EditAction
                 id={id}
                 baseURL={`/dashboard/services/${idService}/images`}
@@ -103,10 +103,9 @@ export const ServiceImagesListView: FC<ServiceImagesListViewProps> = ({
                 id={id}
                 baseURL={`/dashboard/services/${idService}/images`}
               />
-            </div>
+            </>
           );
         }}
-        cellClassName="max-w-[200px]"
         enableSearch
         enablePagination
         enableSort

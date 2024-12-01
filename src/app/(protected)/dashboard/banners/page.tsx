@@ -4,15 +4,20 @@ import { PageButton } from "@/app/components/admin/components/Page/PageButton";
 import { PageTitle } from "@/app/components/admin/components/Page/PageTitle";
 import { RoleName } from "@/interfaces";
 import { hasPermission } from "@/lib/hasPermission";
-import { getBanners } from "@/services/bannerService";
+import { getBanners, searchBanners } from "@/services/bannerService";
 import { Suspense } from "react";
 
 function LoadingTable() {
   return <div>Cargando banners...</div>;
 }
 
-export default async function BannerListPage() {
-  const banners = await getBanners();
+export default async function BannerListPage({
+  searchParams: { q },
+}: {
+  searchParams: { q: string };
+}) {
+  const banners = q ? await searchBanners(q) : await getBanners();
+
   if (!banners) return <div>No se encontraron banners</div>;
 
   return (

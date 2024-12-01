@@ -3,12 +3,12 @@ import { Banner } from "@/interfaces";
 import { FetchCustomBody } from "@/lib/FetchCustomBody";
 import { ToastFail, ToastSuccess } from "@/lib/splash";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FC } from "react";
 import { Alert } from "../Alert/Alert";
 import { PreviewImageList } from "../PreviewImageList";
-import { DynamicTable, TableColumn } from "../Table/DynamicTable";
 import { EditAction, RemoveAction } from "../Table/Actions";
+import { DynamicTable, TableColumn } from "../Table/DynamicTable";
 
 interface BannerListViewProps {
   banners: Banner[];
@@ -76,6 +76,8 @@ export const BannerListView: FC<BannerListViewProps> = ({ banners }) => {
     console.log("Nuevo orden:", reorderedItems);
   };
 
+  const handleSearch = (q: string) => {};
+
   return (
     <>
       <Alert
@@ -92,13 +94,12 @@ export const BannerListView: FC<BannerListViewProps> = ({ banners }) => {
       <DynamicTable
         columns={columns}
         data={banners}
-        baseUrl="/dashboard/banners"
         renderActions={(id: string) => {
           return (
-            <div className="flex gap-2 items-center justify-center">
+            <>
               <EditAction id={id} baseURL="/dashboard/banners" />
               <RemoveAction id={id} baseURL="/dashboard/banners" />
-            </div>
+            </>
           );
         }}
         enableSearch

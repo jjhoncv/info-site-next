@@ -7,6 +7,11 @@ export async function getUsers(): Promise<User[]> {
   return parseJSON(await user.getUsers());
 }
 
+export async function searchUsers(q: string): Promise<User[]> {
+  const user = new UserModel();
+  return parseJSON(await user.searchUsers(q));
+}
+
 export async function getUser(id: string): Promise<User | null> {
   const user = new UserModel();
   return parseJSON(await user.getUser(id));

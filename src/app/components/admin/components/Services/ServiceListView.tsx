@@ -8,7 +8,7 @@ import { Alert } from "../Alert/Alert";
 import { PreviewImageList } from "../PreviewImageList";
 import { DynamicTable, TableColumn } from "../Table/DynamicTable";
 import Link from "next/link";
-import { PencilIcon, TrashIcon } from "lucide-react";
+import { Edit2, PencilIcon, Trash2, TrashIcon } from "lucide-react";
 import { EditAction, GalleryAction, RemoveAction } from "../Table/Actions";
 
 interface ServiceListViewProps {
@@ -82,7 +82,7 @@ export const ServiceListView: FC<ServiceListViewProps> = ({ services }) => {
   return (
     <>
       <Alert
-        message="¿Estás seguro de eliminar este servicio?"
+        message="¿Estás seguro de eliminar este documento?"
         onSuccess={() => {
           const urlParams = new URLSearchParams(window.location.search);
           const id = urlParams.get("id");
@@ -98,14 +98,13 @@ export const ServiceListView: FC<ServiceListViewProps> = ({ services }) => {
         baseUrl="/dashboard/services"
         renderActions={(id: string) => {
           return (
-            <div className="flex gap-2 items-center justify-center">
+            <>
               <EditAction id={id} baseURL="/dashboard/services" />
-              <RemoveAction id={id} baseURL="/dashboard/services" />
               <GalleryAction id={id} baseURL="/dashboard/services" />
-            </div>
+              <RemoveAction id={id} baseURL="/dashboard/services" />
+            </>
           );
         }}
-        cellClassName="max-w-[200px]"
         enableSearch
         enablePagination
         enableSort

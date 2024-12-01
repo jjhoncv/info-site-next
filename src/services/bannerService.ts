@@ -2,6 +2,11 @@ import { parseJSON } from "@/lib/utils";
 import { BannerModel } from "../models/BannerModel";
 import { Banner } from "@/interfaces";
 
+export async function searchBanners(q?: string): Promise<Banner[]> {
+  const banner = new BannerModel();
+  return parseJSON(await banner.searchBanners(q));
+}
+
 export async function getBanners(): Promise<Banner[]> {
   const banner = new BannerModel();
   return parseJSON(await banner.getBanners());

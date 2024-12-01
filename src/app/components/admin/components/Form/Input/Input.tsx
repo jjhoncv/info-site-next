@@ -68,7 +68,7 @@ export const Input = forwardRef<
     ref
   ) => {
     const baseClassName =
-      "bg-white w-full border border-gray-300 rounded px-3 py-2";
+      "bg-white w-full border border-gray-300 font-light text-sm rounded px-3 py-3";
     const errorClassName = error
       ? "border-red-500"
       : "border-gray-200 hover:border-gray-300";
@@ -125,14 +125,14 @@ export const Input = forwardRef<
         <div className="flex flex-col gap-1">
           {label && <label className="text-sm">{label}</label>}
           <div className="relative flex items-center">
+            <Search size={18} className="absolute left-3" strokeWidth={1} />
             <input
               type={type}
               ref={ref as React.Ref<HTMLInputElement>}
-              className={`${inputClassName} min-h-[42px] pr-5`}
+              className={`${inputClassName} min-h-[42px] pl-10`}
               onChange={onChange}
               {...inputProps}
             />
-            <Search size={18} className="absolute right-3 stroke-slate-300" />
           </div>
 
           {error && (

@@ -88,10 +88,10 @@ export const UserListView: FC<UserListViewProps> = ({ users }) => {
         baseUrl="/dashboard/users"
         renderActions={(id: string) => {
           return (
-            <div className="flex gap-2 items-center justify-center">
+            <>
               <EditAction id={id} baseURL="/dashboard/users" />
               <RemoveAction id={id} baseURL="/dashboard/users" />
-            </div>
+            </>
           );
         }}
         enableSearch
@@ -101,9 +101,6 @@ export const UserListView: FC<UserListViewProps> = ({ users }) => {
         pageSize={5}
         pageSizeOptions={[5, 10, 20, 50]}
         onReorder={handleReorder}
-        onEdit={(id) => {
-          router.replace("/dashboard/users/" + id);
-        }}
       />
     </>
   );
