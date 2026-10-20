@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ajk-ui/footer": "^0.4.1",
+    "@ajk-ui/header": "^0.2.2",
+    "@ajk-ui/theme-utils": "^1.1.1",
     "@hello-pangea/dnd": "^17.0.0",
     "@hookform/resolvers": "^3.9.0",
     "@types/react-beautiful-dnd": "^13.1.8",
